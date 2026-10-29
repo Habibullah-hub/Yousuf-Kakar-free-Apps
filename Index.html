@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saad Kakar FreeApps - Microsoft Store Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-[#121212] text-white min-h-screen font-sans flex flex-col justify-between">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-[#1f1f1f] border-b border-[#2d2d2d] sticky top-0 z-50 px-3 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+            <button class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">SK</button>
+            <span class="font-semibold text-sm sm:text-base">Saad Kakar FreeApps</span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <!-- Real-Time Search Bar -->
+            <div class="relative">
+                <input type="text" id="searchInput" oninput="filterApps()" placeholder="Search apps..." class="w-32 sm:w-64 bg-[#2b2b2b] border border-[#3a3a3a] rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 placeholder-gray-400">
+            </div>
+
+            <!-- Share / QR Code Button -->
+            <button onclick="showShareModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold shadow-lg transition" title="Share Website QR">🔗 Share</button>
+
+            <!-- KAKAR Admin Button -->
+            <button onclick="showAdminMenu()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-bold shadow-lg transition">KAKAR</button>
+        </div>
+    </header>
+
+    <div class="flex flex-1">
+        <!-- Sidebar Navigation -->
+        <aside class="w-16 bg-[#181818] border-r border-[#2d2d2d] flex flex-col items-center py-4 space-y-6">
+            <button onclick="filterCategory('all')" title="All Apps" class="p-2 hover:bg-[#2b2b2b] rounded-lg text-emerald-400">🏠</button>
+            <button onclick="filterCategory('Tools')" title="Tools" class="p-2 hover:bg-[#2b2b2b] rounded-lg text-gray-400">🛠️</button>
+            <button onclick="filterCategory('Games')" title="Games" class="p-2 hover:bg-[#2b2b2b] rounded-lg text-gray-400">🎮</button>
+            <button onclick="filterCategory('Productivity')" title="Productivity" class="p-2 hover:bg-[#2b2b2b] rounded-lg text-gray-400">📁</button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-4 sm:p-6">
+            <!-- Top Ad Banner Space -->
+            <div id="topAdBox" class="mb-6 bg-[#1f1f1f] border border-[#2d2d2d] rounded-xl p-4 text-center text-gray-400 text-xs">
+                (Top Advertisement Space)
+            </div>
+
+            <!-- Apps Grid -->
+            <div id="appsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <div class="text-6xl mb-4">📦</div>
+                <h3 class="text-xl font-bold">No apps found</h3>
+                <p class="text-gray-400 text-sm mt-1">The requested content is not available or search is incorrect.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Share & QR Code Modal -->
+    <div id="shareModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1f1f1f] border border-[#333] rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl relative">
+            <h3 class="text-lg font-bold mb-2">Share Website</h3>
+            <p class="text-gray-400 text-xs mb-4">Scan this QR code with any mobile camera to open this website instantly!</p>
+            
+            <!-- QR Code Container -->
+            <div class="bg-white p-4 rounded-xl inline-block mb-4 shadow-inner" id="qrcode"></div>
+
+            <div class="space-y-2">
+                <button onclick="copySiteLink()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">📋 Copy Website Link</button>
+                <button onclick="closeShareModal()" class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-xs font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Choices Modal with Dropdown -->
+    <div id="adminModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1f1f1f] border border-[#333] rounded-2xl p-6 w-full max-w-sm text-center">
+            <h3 class="text-lg font-bold mb-4">KAKAR Admin Control</h3>
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Select Admin Action:</label>
+                    <select id="adminActionSelect" class="w-full bg-[#121212] border border-[#333] rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+                        <option value="upload">Upload File (Add App)</option>
+                        <option value="edit">Edit File (Update App)</option>
+                        <option value="delete">Delete File (Remove App)</option>
+                        <option value="ads">Manage Ads</option>
+                    </select>
+                </div>
+                <div class="flex space-x-2 pt-2">
+                    <button onclick="closeAdminModal()" class="w-1/2 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-semibold">Cancel</button>
+                    <button onclick="executeAdminAction()" class="w-1/2 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-bold">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add / Edit App Modal -->
+    <div id="addModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1f1f1f] border border-[#333] rounded-2xl max-w-md w-full p-6 text-left">
+            <h3 id="modalTitle" class="text-lg font-bold mb-4">Upload New File / App</h3>
+            <form id="addAppForm" onsubmit="saveApp(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">App Name (Exact name needed for editing)</label>
+                    <input type="text" id="appName" required class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-gray-400 mb-1">Category</label>
+                        <select id="appCategory" class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500">
+                            <option value="Tools">Tools</option>
+                            <option value="Games">Games</option>
+                            <option value="Productivity">Productivity</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1">Size / Version</label>
+                        <input type="text" id="appMeta" required placeholder="v1.0 (20 MB)" class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Upload App Logo / Image (Optional)</label>
+                    <input type="file" id="appImageFile" accept="image/*" class="w-full bg-[#121212] border border-[#333] rounded-lg p-1.5 text-gray-300">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Download URL (Direct Link)</label>
+                    <input type="url" id="appUrl" required placeholder="https://..." class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Description (Paid / Pro info)</label>
+                    <textarea id="appDesc" rows="2" required class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-700 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg font-bold">Save App</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manage Ads Modal -->
+    <div id="adsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1f1f1f] border border-[#333] rounded-2xl max-w-md w-full p-6 text-left">
+            <h3 class="text-lg font-bold mb-4">Manage Ads</h3>
+            <form onsubmit="saveAdsCode(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1">Top Ad Code</label>
+                    <textarea id="topAdInput" rows="2" class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white font-mono"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1">Download Modal Ad Code</label>
+                    <textarea id="downloadAdInput" rows="2" class="w-full bg-[#121212] border border-[#333] rounded-lg p-2 text-white font-mono"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeAdsModal()" class="px-4 py-2 bg-gray-700 rounded-lg">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-lg font-bold">Save Ads</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODYOLO Style Download Inline Progress Modal -->
+    <div id="downloadModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#1f1f1f] border border-[#333] rounded-2xl max-w-md w-full p-6 text-center shadow-2xl relative">
+            <h3 id="modalAppName" class="text-xl font-bold mb-2"></h3>
+            
+            <!-- Progress Box (MODYOLO Style) -->
+            <div id="progressBox" class="bg-[#121212] border border-[#2d2d2d] rounded-xl p-5 mb-5">
+                <p class="text-gray-300 text-xs mb-3 font-medium">Your link is almost ready, please wait a few seconds...</p>
+                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mb-4">
+                    <div id="progressBar" class="bg-red-500 h-full w-0 transition-all duration-1000"></div>
+                </div>
+                <!-- Download Ad Space inside progress -->
+                <div id="downloadAdBox" class="min-h-[80px] flex items-center justify-center text-xs text-gray-500 border border-dashed border-gray-700 rounded-lg p-2">
+                    (Download Ad Space)
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-3">
+                <button onclick="closeDownloadModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs font-semibold">Cancel</button>
+                <a id="finalDownloadBtn" href="#" target="_blank" class="hidden px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-900/30">🚀 Click to Download APK Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JS Logic -->
+    <script>
+        /* ========================================================
+           KAKAR ADMIN PASSWORD CONFIGURATION
+           Yahan apna naya password set kar diya gaya hai:
+        ======================================================== */
+        const KAKAR_ADMIN_PASSWORD = "Kakar007@"; 
+
+        let currentTimer = null;
+        let qrInitialized = false;
+
+        function getApps() {
+            return JSON.parse(localStorage.getItem('saad_apps') || '[]');
+        }
+
+        function renderApps(appsToDisplay = getApps()) {
+            const grid = document.getElementById('appsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (appsToDisplay.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            appsToDisplay.forEach(app => {
+                const card = document.createElement('div');
+                card.className = 'bg-[#1f1f1f] border border-[#2d2d2d] rounded-2xl p-5 flex flex-col justify-between hover:border-emerald-500/50 transition duration-300 shadow-lg';
+                
+                let iconContent = app.image ? `<img src="${app.image}" class="w-12 h-12 rounded-xl object-cover">` : `<span class="text-2xl">🛠️</span>`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-[#2b2b2b] flex items-center justify-center overflow-hidden">${iconContent}</div>
+                            <div>
+                                <h3 class="font-bold text-white text-base">${app.name}</h3>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/50">${app.category}</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-xs mb-4 line-clamp-2">${app.desc}</p>
+                    </div>
+                    <div class="pt-4 border-t border-[#2d2d2d] flex items-center justify-between">
+                        <span class="text-xs text-gray-500">${app.meta}</span>
+                        <button onclick="startDownloadFlow('${app.name}', '${app.url}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-lg shadow-emerald-900/30">Download APK</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function startDownloadFlow(appName, appUrl) {
+            document.getElementById('modalAppName').innerText = appName;
+            const finalBtn = document.getElementById('finalDownloadBtn');
+            const progressBar = document.getElementById('progressBar');
+            
+            finalBtn.href = appUrl;
+            finalBtn.classList.add('hidden');
+            progressBar.style.width = '0%';
+            
+            document.getElementById('downloadModal').classList.remove('hidden');
+
+            let width = 0;
+            if (currentTimer) clearInterval(currentTimer);
+
+            currentTimer = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(currentTimer);
+                    progressBar.style.width = '100%';
+                    finalBtn.classList.remove('hidden');
+                } else {
+                    width += 20;
+                    progressBar.style.width = width + '%';
+                }
+            }, 1000);
+        }
+
+        function closeDownloadModal() {
+            if (currentTimer) clearInterval(currentTimer);
+            document.getElementById('downloadModal').classList.add('hidden');
+        }
+
+        /* ========================================================
+           SHARE & QR CODE FUNCTIONS
+        ======================================================== */
+        function showShareModal() {
+            document.getElementById('shareModal').classList.remove('hidden');
+            if (!qrInitialized) {
+                document.getElementById('qrcode').innerHTML = "";
+                new QRCode(document.getElementById("qrcode"), {
+                    text: window.location.href,
+                    width: 150,
+                    height: 150,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                qrInitialized = true;
+            }
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function copySiteLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Website link copied to clipboard!');
+        }
+
+        /* ========================================================
+           KAKAR ADMIN MENU & ACTIONS HANDLER
+        ======================================================== */
+        function showAdminMenu() {
+            let p = prompt('Enter KAKAR Admin Password:');
+            if (p === KAKAR_ADMIN_PASSWORD) {
+                document.getElementById('adminModal').classList.remove('hidden');
+            } else if (p !== null) {
+                alert('Wrong Password!');
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        function executeAdminAction() {
+            const action = document.getElementById('adminActionSelect').value;
+            closeAdminModal();
+            if (action === 'upload') {
+                document.getElementById('modalTitle').innerText = "Upload New File / App";
+                document.getElementById('addAppForm').reset();
+                document.getElementById('addModal').classList.remove('hidden');
+            } else if (action === 'edit') {
+                let targetName = prompt('Enter the exact name of the app you want to edit:');
+                if (targetName) {
+                    let apps = getApps();
+                    let existingApp = apps.find(a => a.name.toLowerCase() === targetName.toLowerCase());
+                    if (existingApp) {
+                        document.getElementById('appName').value = existingApp.name;
+                        document.getElementById('appCategory').value = existingApp.category;
+                        document.getElementById('appMeta').value = existingApp.meta;
+                        document.getElementById('appUrl').value = existingApp.url;
+                        document.getElementById('appDesc').value = existingApp.desc;
+                        document.getElementById('modalTitle').innerText = "Edit Existing App";
+                        document.getElementById('addModal').classList.remove('hidden');
+                    } else {
+                        alert('App not found with this name!');
+                    }
+                }
+            } else if (action === 'delete') {
+                let q = prompt('Enter the exact app name to delete:');
+                if (q) {
+                    let apps = getApps();
+                    let filtered = apps.filter(a => a.name.toLowerCase() !== q.toLowerCase());
+                    localStorage.setItem('saad_apps', JSON.stringify(filtered));
+                    renderApps();
+                    alert('App successfully deleted!');
+                }
+            } else if (action === 'ads') {
+                const ads = JSON.parse(localStorage.getItem('saad_ads') || '{}');
+                document.getElementById('topAdInput').value = ads.top || '';
+                document.getElementById('downloadAdInput').value = ads.download || '';
+                document.getElementById('adsModal').classList.remove('hidden');
+            }
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
+        }
+
+        function saveApp(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('appImageFile');
+            const file = fileInput.files[0];
+            const appNameInput = document.getElementById('appName').value;
+
+            const appData = {
+                name: appNameInput,
+                category: document.getElementById('appCategory').value,
+                meta: document.getElementById('appMeta').value,
+                url: document.getElementById('appUrl').value,
+                desc: document.getElementById('appDesc').value,
+                image: ''
+            };
+
+            let apps = getApps();
+            let existingIndex = apps.findIndex(a => a.name.toLowerCase() === appNameInput.toLowerCase());
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    appData.image = evt.target.result;
+                    commitAppSave(appData, existingIndex, apps);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                if (existingIndex !== -1) {
+                    appData.image = apps[existingIndex].image;
+                }
+                commitAppSave(appData, existingIndex, apps);
+            }
+        }
+
+        function commitAppSave(appData, existingIndex, apps) {
+            if (existingIndex !== -1) {
+                apps[existingIndex] = appData;
+                alert('App successfully updated!');
+            } else {
+                apps.unshift(appData);
+                alert('App successfully added!');
+            }
+            localStorage.setItem('saad_apps', JSON.stringify(apps));
+            document.getElementById('addAppForm').reset();
+            closeAddModal();
+            renderApps();
+        }
+
+        function closeAdsModal() {
+            document.getElementById('adsModal').classList.add('hidden');
+        }
+
+        function saveAdsCode(e) {
+            e.preventDefault();
+            const ads = {
+                top: document.getElementById('topAdInput').value,
+                download: document.getElementById('downloadAdInput').value
+            };
+            localStorage.setItem('saad_ads', JSON.stringify(ads));
+            closeAdsModal();
+            loadAds();
+            alert('Ad codes successfully saved!');
+        }
+
+        function loadAds() {
+            const ads = JSON.parse(localStorage.getItem('saad_ads') || '{}');
+            if (ads.top && ads.top.trim() !== '') {
+                document.getElementById('topAdBox').innerHTML = ads.top;
+            }
+            if (ads.download && ads.download.trim() !== '') {
+                document.getElementById('downloadAdBox').innerHTML = ads.download;
+            }
+        }
+
+        function filterCategory(cat) {
+            let apps = getApps();
+            if (cat === 'all') {
+                renderApps(apps);
+            } else {
+                renderApps(apps.filter(a => a.category === cat));
+            }
+        }
+
+        function filterApps() {
+            let query = document.getElementById('searchInput').value.toLowerCase().trim();
+            let apps = getApps();
+            let filtered = apps.filter(a => 
+                a.name.toLowerCase().includes(query) || 
+                a.desc.toLowerCase().includes(query) ||
+                a.category.toLowerCase().includes(query)
+            );
+            renderApps(filtered);
+        }
+
+        // Initialize Page
+        renderApps();
+        loadAds();
+    </script>
+</body>
+</html>
