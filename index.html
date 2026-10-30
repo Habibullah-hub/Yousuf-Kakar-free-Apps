@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yousuf Kakar Free Apps</title>
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -13,14 +13,13 @@
                 extend: {
                     colors: {
                         emerald: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
                             950: '#022c22',
+                            900: '#064e3b',
+                            800: '#065f46',
+                            700: '#047857',
+                            600: '#059669',
+                            500: '#10b981',
+                            400: '#34d399',
                         }
                     }
                 }
@@ -29,379 +28,309 @@
     </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS Client -->
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+<body class="bg-[#021812] text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950">
+
+    <!-- Top Alert Banner -->
+    <div id="configAlert" class="bg-amber-900/60 border-b border-amber-600/40 text-amber-200 text-xs py-2 px-4 text-center font-medium flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Supabase configuration missing. Displaying offline sample apps.</span>
+        <button onclick="openSupabaseModal()" class="underline font-bold ml-2 text-white hover:text-emerald-400">Configure</button>
+    </div>
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-950/80 border-b border-emerald-950/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-[#021812]/90 border-b border-emerald-950">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-emerald-900/30">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center font-bold text-slate-950 text-lg shadow-lg shadow-emerald-500/20">
                     YK
                 </div>
                 <div>
-                    <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">Yousuf Kakar</span>
-                    <span class="block text-xs text-emerald-400 font-medium tracking-widest uppercase">Free Apps</span>
+                    <span class="font-bold text-base tracking-tight text-white block">Yousuf Kakar</span>
+                    <span class="block text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Free Apps Hub</span>
                 </div>
             </div>
 
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <button onclick="switchTab('home')" class="text-emerald-400 hover:text-emerald-300 transition">Home</button>
-                <button onclick="switchTab('apps')" class="text-slate-300 hover:text-emerald-400 transition">Browse Apps</button>
-                <button onclick="switchTab('about')" class="text-slate-300 hover:text-emerald-400 transition">About</button>
-                <button onclick="switchTab('contact')" class="text-slate-300 hover:text-emerald-400 transition">Contact</button>
-            </nav>
-
             <!-- Actions -->
-            <div class="flex items-center space-x-3">
-                <button onclick="openSupabaseModal()" class="p-2 rounded-xl bg-slate-900 border border-emerald-900/50 text-emerald-400 hover:bg-emerald-950/40 transition" title="Configure Supabase">
-                    <i class="fa-solid fa-database"></i>
+            <div class="flex items-center space-x-2">
+                <button onclick="openSupabaseModal()" class="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-800/50 text-emerald-400 flex items-center justify-center hover:bg-emerald-900 transition">
+                    <i class="fa-solid fa-database text-xs"></i>
                 </button>
                 <div id="authNavContainer">
-                    <button onclick="openAuthModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center space-x-2">
+                    <button onclick="openAuthModal()" class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition">
                         <i class="fa-solid fa-lock text-xs"></i>
-                        <span>Admin Login</span>
                     </button>
                 </div>
-                <!-- Mobile Menu Button -->
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white">
-                    <i class="fa-solid fa-bars text-lg"></i>
+                <button onclick="toggleMobileMenu()" class="w-9 h-9 rounded-xl bg-emerald-950/80 border border-emerald-800/50 text-slate-300 flex items-center justify-center hover:text-white">
+                    <i class="fa-solid fa-bars text-xs"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div id="mobileMenu" class="hidden md:hidden border-b border-emerald-950/50 bg-slate-900/95 px-4 pt-2 pb-4 space-y-2">
-            <button onclick="switchTab('home'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-emerald-950/50">Home</button>
-            <button onclick="switchTab('apps'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-emerald-950/50">Browse Apps</button>
-            <button onclick="switchTab('about'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-emerald-950/50">About</button>
-            <button onclick="switchTab('contact'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-emerald-950/50">Contact</button>
+        <div id="mobileMenu" class="hidden border-b border-emerald-950 bg-[#021812] px-4 py-3 space-y-2 text-sm">
+            <button onclick="switchTab('home'); toggleMobileMenu();" class="block w-full text-left py-2 text-emerald-400 font-medium">Home & Apps</button>
+            <button onclick="switchTab('about'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-300 hover:text-white">About Platform</button>
+            <button onclick="switchTab('contact'); toggleMobileMenu();" class="block w-full text-left py-2 text-slate-300 hover:text-white">Contact & Request</button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-6 space-y-10">
 
-        <!-- HOME TAB -->
-        <section id="tab-home" class="space-y-16 pb-16">
+        <!-- HOME & APPS TAB -->
+        <div id="tab-home" class="space-y-8">
             <!-- Hero Banner -->
-            <div class="relative overflow-hidden pt-16 pb-20 px-4 sm:px-6 lg:px-8 border-b border-emerald-950/30 bg-gradient-to-b from-emerald-950/20 to-transparent">
-                <div class="max-w-4xl mx-auto text-center space-y-6">
-                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-800/50 text-emerald-400 text-xs font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span>Trusted Free Software Hub</span>
-                    </div>
-                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white">
-                        Discover & Download <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">Premium Free Apps</span>
-                    </h1>
-                    <p class="text-lg text-slate-400 max-w-2xl mx-auto">
-                        Explore verified, secure, and lightning-fast applications curated for Android and Desktop devices by Yousuf Kakar.
-                    </p>
-                    <div class="flex flex-wrap justify-center gap-4 pt-4">
-                        <button onclick="switchTab('apps')" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-lg shadow-emerald-500/25 transition flex items-center space-x-2">
-                            <i class="fa-solid fa-compass"></i>
-                            <span>Explore All Apps</span>
-                        </button>
-                        <a href="#featured-section" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-900/50 text-emerald-400 font-semibold transition">
-                            Featured Apps
-                        </a>
-                    </div>
+            <div class="text-center space-y-4 pt-4">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/50 text-emerald-400 text-[11px] font-semibold">
+                    <i class="fa-solid fa-shield-halved text-[10px]"></i>
+                    <span>100% Free & Safe Downloads</span>
                 </div>
-            </div>
-
-            <!-- Featured Apps Section -->
-            <div id="featured-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
-                            <i class="fa-solid fa-fire text-emerald-500"></i>
-                            <span>Featured Applications</span>
-                        </h2>
-                        <p class="text-sm text-slate-400">Hand-picked top rated software releases</p>
-                    </div>
-                    <button onclick="switchTab('apps')" class="text-sm text-emerald-400 hover:text-emerald-300 font-semibold flex items-center space-x-1">
-                        <span>View All</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
-                    </button>
-                </div>
-                <div id="featuredAppsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Dynamic Featured Apps injected here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- APPS / BROWSE TAB -->
-        <section id="tab-apps" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            <div class="space-y-4">
-                <h2 class="text-3xl font-extrabold text-white">App Library</h2>
-                <p class="text-slate-400">Search through our comprehensive collection of safe applications.</p>
-                
-                <!-- Search & Filters -->
-                <div class="flex flex-col md:flex-row gap-4 items-center justify-between pt-2">
-                    <div class="relative w-full md:w-96">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-                        <input type="text" id="searchInput" oninput="filterApps()" placeholder="Search apps by name or description..." class="w-full pl-11 pr-4 py-3 bg-slate-900 border border-emerald-900/50 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
-                    </div>
-                    <div id="categoryFilters" class="flex flex-wrap gap-2 w-full md:w-auto">
-                        <button onclick="setCategory('All')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-500 text-slate-950 transition">All</button>
-                        <button onclick="setCategory('Utility')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-emerald-900/30 transition">Utility</button>
-                        <button onclick="setCategory('Productivity')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-emerald-900/30 transition">Productivity</button>
-                        <button onclick="setCategory('Tools')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-emerald-900/30 transition">Tools</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Apps Grid -->
-            <div id="allAppsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamic Apps List -->
-            </div>
-        </section>
-
-        <!-- ABOUT TAB -->
-        <section id="tab-about" class="hidden max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
-            <div class="bg-slate-900/80 border border-emerald-900/40 rounded-3xl p-8 sm:p-12 space-y-6 shadow-2xl backdrop-blur-md">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-3xl shadow-lg shadow-emerald-900/30">
-                    YK
-                </div>
-                <h2 class="text-3xl font-bold text-white">About Yousuf Kakar Free Apps</h2>
-                <p class="text-slate-300 leading-relaxed">
-                    Welcome to <strong>Yousuf Kakar Free Apps</strong>, your ultimate trusted destination for secure, lightning-fast, and verified software applications. Designed specifically to work seamlessly across Android mobile phones and desktop computers.
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    Get Clean, Unmodified <br><span class="text-emerald-400">Premium Software & Apps</span>
+                </h1>
+                <p class="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                    Curated Android, Windows, and Web applications built or verified by <strong class="text-slate-200">Yousuf Kakar</strong>. Ad-free, fast, and completely free.
                 </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                    <div class="p-5 rounded-2xl bg-slate-950 border border-emerald-950">
-                        <i class="fa-solid fa-shield-halved text-emerald-400 text-xl mb-3"></i>
-                        <h3 class="font-bold text-white mb-1">100% Safe & Secure</h3>
-                        <p class="text-xs text-slate-400">All applications are strictly inspected and verified before publishing.</p>
+
+                <!-- Search Input -->
+                <div class="relative max-w-md mx-auto pt-2">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-5 text-emerald-500/70 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="filterApps()" placeholder="Search apps, tools, games..." class="w-full pl-11 pr-4 py-3 bg-[#01120d] border border-emerald-900/80 rounded-2xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-sm shadow-inner">
+                </div>
+
+                <!-- Stats Counters -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 max-w-md mx-auto">
+                    <div class="bg-[#01120d] border border-emerald-950 p-3 rounded-2xl text-center">
+                        <span id="statAppCount" class="block text-xl font-extrabold text-white">4</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Available Apps</span>
                     </div>
-                    <div class="p-5 rounded-2xl bg-slate-950 border border-emerald-950">
-                        <i class="fa-solid fa-bolt text-emerald-400 text-xl mb-3"></i>
-                        <h3 class="font-bold text-white mb-1">Direct High-Speed Links</h3>
-                        <p class="text-xs text-slate-400">No annoying waiting timers or fake download popups.</p>
+                    <div class="bg-[#01120d] border border-emerald-950 p-3 rounded-2xl text-center">
+                        <span class="block text-xl font-extrabold text-emerald-400">100%</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Free & Safe</span>
+                    </div>
+                    <div class="bg-[#01120d] border border-emerald-950 p-3 rounded-2xl text-center col-span-2 sm:col-span-1">
+                        <span class="block text-xl font-extrabold text-white">Direct</span>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Fast Links</span>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- CONTACT TAB -->
-        <section id="tab-contact" class="hidden max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
-            <div class="bg-slate-900/80 border border-emerald-900/40 rounded-3xl p-8 sm:p-12 space-y-6 shadow-2xl backdrop-blur-md">
-                <h2 class="text-3xl font-bold text-white">Get in Touch</h2>
-                <p class="text-slate-300">Have questions, feedback, or want to submit your own app? Reach out to Yousuf Kakar directly.</p>
-                <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+            <!-- Categories Tabs -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+                <button onclick="setCategory('All')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 flex items-center space-x-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-[#021812] fa-layer-group text-[10px]"></i>
+                    <span>All Apps</span>
+                </button>
+                <button onclick="setCategory('Tools')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-[#01120d] border border-emerald-950 text-slate-300 hover:text-emerald-400 flex items-center space-x-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-wrench text-[10px]"></i>
+                    <span>Tools</span>
+                </button>
+                <button onclick="setCategory('Games')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-[#01120d] border border-emerald-950 text-slate-300 hover:text-emerald-400 flex items-center space-x-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-gamepad text-[10px]"></i>
+                    <span>Games</span>
+                </button>
+            </div>
+
+            <!-- Applications List -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <span>All Applications</span>
+                        <span id="appBadgeCount" class="text-xs px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-400 font-semibold">4</span>
+                    </h2>
+                    <span class="text-xs text-slate-500">Click on any app card for details and download links</span>
+                </div>
+
+                <div id="appsGrid" class="space-y-4">
+                    <!-- Cards dynamic render -->
+                </div>
+            </div>
+
+            <!-- About Platform Card -->
+            <div class="bg-[#01120d] border border-emerald-950 rounded-3xl p-6 space-y-4 text-center sm:text-left mt-12">
+                <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block">About The Platform</span>
+                <h3 class="text-xl font-bold text-white">Dedicated to Safe & Fast App Distribution</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    <strong>Yousuf Kakar Free Apps</strong> is an independent software library built to deliver high quality, lightweight, virus-free Android APKs and Desktop applications.
+                </p>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Every application listed here is tested for stability and performance. We strictly avoid intrusive advertisements, paywalls, or misleading download triggers.
+                </p>
+
+                <div class="flex flex-wrap justify-center sm:justify-start gap-2 pt-2">
+                    <span class="px-3 py-1 rounded-lg bg-emerald-950/80 border border-emerald-800/40 text-emerald-400 text-[11px] font-medium">Malware-Free</span>
+                    <span class="px-3 py-1 rounded-lg bg-emerald-950/80 border border-emerald-800/40 text-emerald-400 text-[11px] font-medium">Direct Downloads</span>
+                    <span class="px-3 py-1 rounded-lg bg-emerald-950/80 border border-emerald-800/40 text-emerald-400 text-[11px] font-medium">Regular Updates</span>
+                </div>
+
+                <!-- Creator Card -->
+                <div class="pt-4 border-t border-emerald-950/80 flex flex-col items-center justify-center p-4 bg-[#021812] rounded-2xl space-y-2">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center font-extrabold text-slate-950 text-xl shadow-lg shadow-emerald-500/20">
+                        YK
+                    </div>
+                    <h4 class="font-bold text-white text-sm">Yousuf Kakar</h4>
+                    <span class="text-[11px] text-emerald-400 font-medium">Lead Developer & Curator</span>
+                    <p class="text-[11px] text-slate-400 text-center max-w-xs">Building genuine tech tools to empower students, developers, and daily users worldwide.</p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div id="tab-contact" class="bg-[#01120d] border border-emerald-950 rounded-3xl p-6 space-y-4">
+                <div class="text-center space-y-1">
+                    <h3 class="text-xl font-bold text-white">Contact & Request Apps</h3>
+                    <p class="text-xs text-slate-400">Have a question or want to request a specific application? Send us a message.</p>
+                </div>
+                <form onsubmit="handleContactSubmit(event)" class="space-y-3 pt-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Your Name</label>
-                        <input type="text" required placeholder="Enter your name" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Your Name</label>
+                        <input type="text" required placeholder="e.g. Ali Ahmed" class="w-full px-4 py-2.5 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Email Address</label>
-                        <input type="email" required placeholder="name@example.com" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Your Email</label>
+                        <input type="email" required placeholder="e.g. ali@example.com" class="w-full px-4 py-2.5 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Message</label>
-                        <textarea rows="4" required placeholder="Type your message here..." class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500"></textarea>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">App Request / Message</label>
+                        <textarea rows="3" required placeholder="Write your message or app name here..." class="w-full px-4 py-2.5 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500"></textarea>
                     </div>
-                    <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">Send Message</button>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send Message</span>
+                    </button>
                 </form>
             </div>
-        </section>
+        </div>
 
         <!-- ADMIN DASHBOARD TAB -->
-        <section id="tab-admin" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-emerald-950 pb-6">
+        <div id="tab-admin" class="hidden space-y-6">
+            <div class="flex items-center justify-between border-b border-emerald-950 pb-4">
                 <div>
-                    <h2 class="text-3xl font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-gauge-high text-emerald-500"></i>
-                        <span>Admin Dashboard</span>
-                    </h2>
-                    <p class="text-slate-400 text-sm">Manage, add, and remove applications securely via Supabase RLS.</p>
+                    <h2 class="text-xl font-bold text-white">Admin Dashboard</h2>
+                    <p class="text-xs text-slate-400">Manage apps in database</p>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button onclick="openAppModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Add New App</span>
+                <div class="flex space-x-2">
+                    <button onclick="openAppModal()" class="px-3 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">
+                        + Add App
                     </button>
-                    <button onclick="logoutAdmin()" class="px-4 py-2.5 rounded-xl bg-red-950/50 hover:bg-red-900/60 border border-red-900/50 text-red-400 font-semibold text-sm transition">
+                    <button onclick="logoutAdmin()" class="px-3 py-2 rounded-xl bg-red-950/60 text-red-400 font-semibold text-xs border border-red-900/40">
                         Logout
                     </button>
                 </div>
             </div>
 
-            <!-- Admin Apps Table -->
-            <div class="bg-slate-900/60 border border-emerald-900/40 rounded-2xl overflow-hidden shadow-xl">
+            <div class="bg-[#01120d] border border-emerald-950 rounded-2xl overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-emerald-950/40 border-b border-emerald-900/50 text-xs uppercase text-emerald-400 tracking-wider">
-                                <th class="p-4">App Name</th>
-                                <th class="p-4">Category</th>
-                                <th class="p-4">Platform</th>
-                                <th class="p-4">Version</th>
-                                <th class="p-4 text-right">Actions</th>
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-emerald-950/60 text-emerald-400 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-3">App Name</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Platform</th>
+                                <th class="p-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="adminAppsTableBody" class="divide-y divide-emerald-950/40 text-sm">
-                            <!-- Injected by JS -->
+                        <tbody id="adminTableBody" class="divide-y divide-emerald-950/60">
+                            <!-- Admin Table rows -->
                         </tbody>
                     </table>
                 </div>
             </div>
-        </section>
+        </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-emerald-950/50 bg-slate-950 py-10 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center font-bold text-slate-950 text-sm">
-                    YK
-                </div>
-                <span class="font-bold text-slate-200">Yousuf Kakar Free Apps</span>
-            </div>
-            <p class="text-xs text-slate-500">&copy; 2026 Yousuf Kakar. All rights reserved. Built for Android & Desktop.</p>
-        </div>
+    <footer class="border-t border-emerald-950 bg-[#01120d] py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 Yousuf Kakar Free Apps. Built for Android & Desktop.</p>
     </footer>
 
-    <!-- AUTH MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="text-center space-y-2">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center mx-auto text-xl">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Admin Authentication</h3>
-                <p class="text-xs text-slate-400">Sign in with your authorized admin credentials.</p>
-            </div>
-            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Admin Email</label>
-                    <input type="email" id="adminEmailInput" required placeholder="admin@yousufkakar.com" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Password</label>
-                    <input type="password" id="adminPasswordInput" required placeholder="••••••••" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">Sign In as Admin</button>
+    <!-- MODAL: AUTH -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#01120d] border border-emerald-900/80 rounded-3xl p-6 max-w-xs w-full space-y-4 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-white text-center">Admin Login</h3>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+                <input type="email" id="adminEmail" required placeholder="Admin Email" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <input type="password" id="adminPass" required placeholder="Password" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Sign In</button>
             </form>
         </div>
     </div>
 
-    <!-- SUPABASE CONFIG MODAL -->
-    <div id="supabaseModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-6 shadow-2xl relative">
-            <button onclick="closeSupabaseModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <div class="text-center space-y-2">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-950 border border-emerald-800 text-emerald-400 flex items-center justify-center mx-auto text-xl">
-                    <i class="fa-solid fa-database"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Configure Supabase</h3>
-                <p class="text-xs text-slate-400">Enter your project credentials to connect your database.</p>
-            </div>
-            <form onsubmit="saveSupabaseConfig(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Supabase Project URL</label>
-                    <input type="url" id="sbUrlInput" required placeholder="https://xyz.supabase.co" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Supabase Anon Key</label>
-                    <input type="password" id="sbKeyInput" required placeholder="eyJhbGciOi..." class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500 text-sm">
-                </div>
-                <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">Save & Connect</button>
+    <!-- MODAL: SUPABASE CONFIG -->
+    <div id="supabaseModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#01120d] border border-emerald-900/80 rounded-3xl p-6 max-w-sm w-full space-y-4 relative">
+            <button onclick="closeSupabaseModal()" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-lg font-bold text-white text-center">Supabase Config</h3>
+            <form onsubmit="saveSupabaseConfig(event)" class="space-y-3">
+                <input type="url" id="sbUrl" required placeholder="Project URL" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <input type="password" id="sbKey" required placeholder="Anon Key" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Save & Connect</button>
             </form>
         </div>
     </div>
 
-    <!-- ADD/EDIT APP MODAL -->
-    <div id="appModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-emerald-900/50 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAppModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 id="appModalTitle" class="text-2xl font-bold text-white">Add New App</h3>
-            <form onsubmit="handleAppFormSubmit(event)" class="space-y-4">
-                <input type="hidden" id="appIdField">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">App Name</label>
-                        <input type="text" id="appNameField" required placeholder="e.g. WhatsApp Plus" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Category</label>
-                        <select id="appCategoryField" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                            <option value="Utility">Utility</option>
-                            <option value="Productivity">Productivity</option>
-                            <option value="Tools">Tools</option>
-                        </select>
-                    </div>
+    <!-- MODAL: ADD/EDIT APP -->
+    <div id="appModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-[#01120d] border border-emerald-900/80 rounded-3xl p-6 max-w-md w-full space-y-3 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAppModal()" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="appModalTitle" class="text-lg font-bold text-white">Add App</h3>
+            <form onsubmit="handleAppSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="appId">
+                <input type="text" id="appName" required placeholder="App Name" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="appCat" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                        <option value="Tools">Tools</option>
+                        <option value="Productivity">Productivity</option>
+                        <option value="Games">Games</option>
+                    </select>
+                    <select id="appPlatform" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                        <option value="Android">Android</option>
+                        <option value="Windows">Windows</option>
+                        <option value="Cross-Platform">Cross-Platform</option>
+                    </select>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Platform</label>
-                        <select id="appPlatformField" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                            <option value="Android">Android</option>
-                            <option value="Desktop">Desktop</option>
-                            <option value="Cross-Platform">Cross-Platform</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Version</label>
-                        <input type="text" id="appVersionField" required placeholder="v1.0.0" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Icon Image URL</label>
-                    <input type="url" id="appIconField" required placeholder="https://example.com/icon.png" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Download URL</label>
-                    <input type="url" id="appDownloadField" required placeholder="https://example.com/download" class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Description</label>
-                    <textarea id="appDescField" rows="3" required placeholder="App description..." class="w-full px-4 py-3 bg-slate-950 border border-emerald-900/50 rounded-xl text-slate-100 focus:outline-none focus:border-emerald-500"></textarea>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <input type="checkbox" id="appFeaturedField" class="w-4 h-4 rounded bg-slate-950 border-emerald-900 text-emerald-600 focus:ring-emerald-500">
-                    <label for="appFeaturedField" class="text-sm font-medium text-slate-300">Feature this app on homepage</label>
-                </div>
-                <button type="submit" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition">Save Application</button>
+                <input type="text" id="appVer" required placeholder="Version (e.g. v2.0.0)" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                <input type="url" id="appIcon" required placeholder="Icon URL" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                <input type="url" id="appLink" required placeholder="Download URL" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white">
+                <textarea id="appDesc" rows="2" required placeholder="Description..." class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-white"></textarea>
+                <label class="flex items-center space-x-2 text-slate-300">
+                    <input type="checkbox" id="appFeatured">
+                    <span>Mark as Featured</span>
+                </label>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold">Save Application</button>
             </form>
         </div>
     </div>
 
-    <!-- Application JavaScript -->
+    <!-- JS Logic -->
     <script>
-        // Supabase Initialization
-        let supabaseUrl = localStorage.getItem('yk_sb_url') || '';
-        let supabaseKey = localStorage.getItem('yk_sb_key') || '';
+        let supabaseUrl = localStorage.getItem('yk_url') || '';
+        let supabaseKey = localStorage.getItem('yk_key') || '';
         let supabaseClient = null;
-        let appsList = [];
-        let currentCategory = 'All';
+        let currentCat = 'All';
         let currentUser = null;
 
+        let sampleApps = [
+            { id: '1', name: 'YK Speed Cleaner Pro', category: 'Tools', platform: 'Android', version: 'v2.5.0', icon_url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=120', download_url: '#', description: 'Lightweight memory optimizer and cache cleaner for Android devices. Boosts performance with one tap.', featured: true },
+            { id: '2', name: 'YK PDF Converter & Editor', category: 'Productivity', platform: 'Android', version: 'v1.8.0', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120', download_url: '#', description: 'Convert images and documents to PDF instantly. Features offline OCR text recognition.', featured: true },
+            { id: '3', name: 'YK Dark Cyber Racer', category: 'Games', platform: 'Android', version: 'v1.0.4', icon_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=120', download_url: '#', description: 'High speed arcade racing game optimized for budget Android devices with ultra smooth 60fps.', featured: false },
+            { id: '4', name: 'YK Media Downloader', category: 'Tools', platform: 'Windows', version: 'v3.1.2', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120', download_url: '#', description: 'Download HD videos and audio files directly to your PC with batch link support.', featured: true }
+        ];
+
+        let appsList = [...sampleApps];
+
         if (supabaseUrl && supabaseKey) {
+            document.getElementById('configAlert').classList.add('hidden');
             supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-            checkUserSession();
+            checkSession();
             fetchApps();
-        } else {
-            // Sample fallback data if Supabase isn't configured yet
-            appsList = [
-                { id: '1', name: 'YK Downloader Pro', category: 'Tools', platform: 'Android', version: '2.4.1', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150', download_url: '#', description: 'Blazing fast media downloader for Android devices.', featured: true },
-                { id: '2', name: 'SecureNotes App', category: 'Productivity', platform: 'Cross-Platform', version: '1.2.0', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150', download_url: '#', description: 'End-to-end encrypted notes for your daily workflow.', featured: true },
-                { id: '3', name: 'Emerald Cleaner', category: 'Utility', platform: 'Android', version: '3.0.5', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150', download_url: '#', description: 'Boost device performance and clean junk cache easily.', featured: false }
-            ];
-            renderApps();
         }
 
-        async function checkUserSession() {
+        async function checkSession() {
             if (!supabaseClient) return;
             const { data: { session } } = await supabaseClient.auth.getSession();
             currentUser = session?.user || null;
@@ -412,16 +341,14 @@
             const container = document.getElementById('authNavContainer');
             if (currentUser) {
                 container.innerHTML = `
-                    <button onclick="switchTab('admin')" class="px-4 py-2 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 hover:bg-emerald-900 font-semibold text-sm transition flex items-center space-x-2">
-                        <i class="fa-solid fa-gauge-high"></i>
-                        <span>Dashboard</span>
+                    <button onclick="switchTab('admin')" class="px-3 py-1.5 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 font-bold text-xs">
+                        Dashboard
                     </button>
                 `;
             } else {
                 container.innerHTML = `
-                    <button onclick="openAuthModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-sm shadow-lg shadow-emerald-600/20 transition flex items-center space-x-2">
+                    <button onclick="openAuthModal()" class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-emerald-500/20">
                         <i class="fa-solid fa-lock text-xs"></i>
-                        <span>Admin Login</span>
                     </button>
                 `;
             }
@@ -430,158 +357,125 @@
         async function fetchApps() {
             if (!supabaseClient) return;
             const { data, error } = await supabaseClient.from('apps').select('*').order('created_at', { ascending: false });
-            if (!error && data) {
+            if (!error && data && data.length) {
                 appsList = data;
-                renderApps();
             }
+            renderApps();
         }
 
         function renderApps() {
-            const featuredContainer = document.getElementById('featuredAppsContainer');
-            const allContainer = document.getElementById('allAppsContainer');
-            const adminTableBody = document.getElementById('adminAppsTableBody');
+            const grid = document.getElementById('appsGrid');
+            const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
 
-            // Render Featured
-            const featured = appsList.filter(app => app.featured);
-            featuredContainer.innerHTML = featured.length ? featured.map(app => createAppCard(app)).join('') : '<p class="text-slate-500 col-span-full text-center py-8">No featured apps available.</p>';
-
-            // Render Filtered All Apps
-            const searchVal = document.getElementById('searchInput')?.value.toLowerCase() || '';
             const filtered = appsList.filter(app => {
-                const matchCat = currentCategory === 'All' || app.category === currentCategory;
-                const matchSearch = app.name.toLowerCase().includes(searchVal) || app.description.toLowerCase().includes(searchVal);
+                const matchCat = currentCat === 'All' || app.category === currentCat;
+                const matchSearch = app.name.toLowerCase().includes(search) || app.description.toLowerCase().includes(search);
                 return matchCat && matchSearch;
             });
 
-            allContainer.innerHTML = filtered.length ? filtered.map(app => createAppCard(app)).join('') : '<p class="text-slate-500 col-span-full text-center py-12">No applications found matching your criteria.</p>';
+            document.getElementById('statAppCount').innerText = appsList.length;
+            document.getElementById('appBadgeCount').innerText = filtered.length;
 
-            // Render Admin Table
-            if (adminTableBody) {
-                adminTableBody.innerHTML = appsList.map(app => `
-                    <tr class="hover:bg-emerald-950/20 transition">
-                        <td class="p-4 font-semibold text-white flex items-center space-x-3">
-                            <img src="${app.icon_url}" class="w-8 h-8 rounded-lg object-cover" onerror="this.src='https://via.placeholder.com/40'">
-                            <span>${app.name}</span>
-                        </td>
-                        <td class="p-4 text-emerald-400">${app.category}</td>
-                        <td class="p-4 text-slate-300">${app.platform}</td>
-                        <td class="p-4 text-slate-400">${app.version}</td>
-                        <td class="p-4 text-right space-x-2">
-                            <button onclick="editApp('${app.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-950 text-emerald-400 hover:bg-emerald-900 transition text-xs font-semibold">Edit</button>
-                            <button onclick="deleteApp('${app.id}')" class="px-3 py-1.5 rounded-lg bg-red-950/50 text-red-400 hover:bg-red-900/60 transition text-xs font-semibold">Delete</button>
+            grid.innerHTML = filtered.map(app => `
+                <div class="bg-[#01120d] border border-emerald-950 rounded-2xl p-4 space-y-3 hover:border-emerald-800/60 transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img src="${app.icon_url}" class="w-12 h-12 rounded-xl object-cover border border-emerald-900/60" onerror="this.src='https://via.placeholder.com/60'">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">${app.category}</span>
+                                    ${app.featured ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold"><i class="fa-solid fa-star text-[8px]"></i> FEATURED</span>' : ''}
+                                </div>
+                                <h3 class="font-bold text-white text-sm">${app.name}</h3>
+                                <span class="text-[11px] text-slate-400">${app.platform} &bull; ${app.version}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">${app.description}</p>
+                    <div class="flex items-center space-x-2 pt-1">
+                        <button onclick="alert('${app.name}\\nVersion: ${app.version}\\nPlatform: ${app.platform}')" class="flex-1 py-2 rounded-xl bg-[#021812] border border-emerald-950 text-slate-300 font-semibold text-xs text-center">
+                            <i class="fa-solid fa-circle-info text-[10px] mr-1"></i> Details
+                        </button>
+                        <a href="${app.download_url}" target="_blank" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20">
+                            <i class="fa-solid fa-download text-[10px]"></i>
+                            <span>Get</span>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+
+            // Admin Table
+            const tbody = document.getElementById('adminTableBody');
+            if (tbody) {
+                tbody.innerHTML = appsList.map(app => `
+                    <tr class="hover:bg-emerald-950/30">
+                        <td class="p-3 font-semibold text-white">${app.name}</td>
+                        <td class="p-3 text-emerald-400">${app.category}</td>
+                        <td class="p-3 text-slate-400">${app.platform}</td>
+                        <td class="p-3 text-right space-x-1">
+                            <button onclick="editApp('${app.id}')" class="px-2 py-1 bg-emerald-950 text-emerald-400 rounded">Edit</button>
+                            <button onclick="deleteApp('${app.id}')" class="px-2 py-1 bg-red-950 text-red-400 rounded">Del</button>
                         </td>
                     </tr>
                 `).join('');
             }
         }
 
-        function createAppCard(app) {
-            return `
-                <div class="bg-slate-900/80 border border-emerald-900/40 rounded-2xl p-6 flex flex-col justify-between space-y-4 hover:border-emerald-500/50 transition shadow-xl backdrop-blur-md">
-                    <div class="space-y-4">
-                        <div class="flex items-start justify-between">
-                            <div class="flex items-center space-x-3">
-                                <img src="${app.icon_url}" alt="${app.name}" class="w-12 h-12 rounded-2xl object-cover border border-emerald-900/50" onerror="this.src='https://via.placeholder.com/60'">
-                                <div>
-                                    <h3 class="font-bold text-white text-lg">${app.name}</h3>
-                                    <span class="text-xs text-emerald-400 font-medium">${app.category} &bull; ${app.platform}</span>
-                                </div>
-                            </div>
-                            <span class="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">${app.version}</span>
-                        </div>
-                        <p class="text-slate-400 text-sm line-clamp-2">${app.description}</p>
-                    </div>
-                    <div class="pt-2 border-t border-emerald-950/60 flex items-center justify-between">
-                        <a href="${app.download_url}" target="_blank" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center text-sm shadow-lg shadow-emerald-500/20 transition flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-download text-xs"></i>
-                            <span>Download APK / App</span>
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        function switchTab(tabId) {
-            ['home', 'apps', 'about', 'contact', 'admin'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-            });
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
         function setCategory(cat) {
-            currentCategory = cat;
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                if (btn.textContent.trim() === cat) {
-                    btn.className = 'category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-500 text-slate-950 transition';
+            currentCat = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat)) {
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 flex items-center space-x-1.5 whitespace-nowrap';
                 } else {
-                    btn.className = 'category-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-300 hover:bg-slate-800 border border-emerald-900/30 transition';
+                    btn.className = 'cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-[#01120d] border border-emerald-950 text-slate-300 hover:text-emerald-400 flex items-center space-x-1.5 whitespace-nowrap';
                 }
             });
             renderApps();
         }
 
-        function filterApps() {
-            renderApps();
+        function filterApps() { renderApps(); }
+
+        function switchTab(t) {
+            ['home', 'admin'].forEach(tab => document.getElementById(`tab-${tab}`)?.classList.add('hidden'));
+            document.getElementById(`tab-${t}`)?.classList.remove('hidden');
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Modals Control
+        function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
         function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
         function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-
-        function openSupabaseModal() {
-            document.getElementById('sbUrlInput').value = supabaseUrl;
-            document.getElementById('sbKeyInput').value = supabaseKey;
-            document.getElementById('supabaseModal').classList.remove('hidden');
-        }
+        function openSupabaseModal() { document.getElementById('supabaseModal').classList.remove('hidden'); }
         function closeSupabaseModal() { document.getElementById('supabaseModal').classList.add('hidden'); }
-
-        function openAppModal(app = null) {
-            document.getElementById('appModalTitle').textContent = app ? 'Edit Application' : 'Add New App';
-            document.getElementById('appIdField').value = app ? app.id : '';
-            document.getElementById('appNameField').value = app ? app.name : '';
-            document.getElementById('appCategoryField').value = app ? app.category : 'Utility';
-            document.getElementById('appPlatformField').value = app ? app.platform : 'Android';
-            document.getElementById('appVersionField').value = app ? app.version : 'v1.0.0';
-            document.getElementById('appIconField').value = app ? app.icon_url : '';
-            document.getElementById('appDownloadField').value = app ? app.download_url : '';
-            document.getElementById('appDescField').value = app ? app.description : '';
-            document.getElementById('appFeaturedField').checked = app ? app.featured : false;
+        function openAppModal(app=null) {
+            document.getElementById('appModalTitle').innerText = app ? 'Edit App' : 'Add App';
+            document.getElementById('appId').value = app ? app.id : '';
+            document.getElementById('appName').value = app ? app.name : '';
+            document.getElementById('appCat').value = app ? app.category : 'Tools';
+            document.getElementById('appPlatform').value = app ? app.platform : 'Android';
+            document.getElementById('appVer').value = app ? app.version : 'v1.0.0';
+            document.getElementById('appIcon').value = app ? app.icon_url : '';
+            document.getElementById('appLink').value = app ? app.download_url : '';
+            document.getElementById('appDesc').value = app ? app.description : '';
+            document.getElementById('appFeatured').checked = app ? app.featured : false;
             document.getElementById('appModal').classList.remove('hidden');
         }
         function closeAppModal() { document.getElementById('appModal').classList.add('hidden'); }
 
-        // Supabase Actions
         function saveSupabaseConfig(e) {
             e.preventDefault();
-            const url = document.getElementById('sbUrlInput').value.trim();
-            const key = document.getElementById('sbKeyInput').value.trim();
-            localStorage.setItem('yk_sb_url', url);
-            localStorage.setItem('yk_sb_key', key);
+            localStorage.setItem('yk_url', document.getElementById('sbUrl').value.trim());
+            localStorage.setItem('yk_key', document.getElementById('sbKey').value.trim());
             location.reload();
         }
 
         async function handleAdminLogin(e) {
             e.preventDefault();
-            if (!supabaseClient) {
-                alert('Please configure Supabase credentials first.');
-                openSupabaseModal();
-                return;
-            }
-            const email = document.getElementById('adminEmailInput').value;
-            const password = document.getElementById('adminPasswordInput').value;
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                alert('Login failed: ' + error.message);
-            } else {
-                closeAuthModal();
-                location.reload();
-            }
+            if (!supabaseClient) return alert('Supabase error');
+            const { error } = await supabaseClient.auth.signInWithPassword({
+                email: document.getElementById('adminEmail').value,
+                password: document.getElementById('adminPass').value
+            });
+            if (error) alert(error.message);
+            else location.reload();
         }
 
         async function logoutAdmin() {
@@ -589,61 +483,41 @@
             location.reload();
         }
 
-        async function handleAppFormSubmit(e) {
+        async function handleAppSubmit(e) {
             e.preventDefault();
-            if (!supabaseClient) {
-                alert('Supabase connection required to save apps.');
-                return;
-            }
-            const id = document.getElementById('appIdField').value;
-            const appData = {
-                name: document.getElementById('appNameField').value,
-                category: document.getElementById('appCategoryField').value,
-                platform: document.getElementById('appPlatformField').value,
-                version: document.getElementById('appVersionField').value,
-                icon_url: document.getElementById('appIconField').value,
-                download_url: document.getElementById('appDownloadField').value,
-                description: document.getElementById('appDescField').value,
-                featured: document.getElementById('appFeaturedField').checked
+            if (!supabaseClient) return alert('Config Supabase first');
+            const id = document.getElementById('appId').value;
+            const data = {
+                name: document.getElementById('appName').value,
+                category: document.getElementById('appCat').value,
+                platform: document.getElementById('appPlatform').value,
+                version: document.getElementById('appVer').value,
+                icon_url: document.getElementById('appIcon').value,
+                download_url: document.getElementById('appLink').value,
+                description: document.getElementById('appDesc').value,
+                featured: document.getElementById('appFeatured').checked
             };
-
-            let error;
-            if (id) {
-                const res = await supabaseClient.from('apps').update(appData).eq('id', id);
-                error = res.error;
-            } else {
-                const res = await supabaseClient.from('apps').insert([appData]);
-                error = res.error;
-            }
-
-            if (error) {
-                alert('Error saving app: ' + error.message + '\nEnsure your RLS policies and admin role are correctly configured.');
-            } else {
-                closeAppModal();
-                fetchApps();
-            }
+            const res = id ? await supabaseClient.from('apps').update(data).eq('id', id) : await supabaseClient.from('apps').insert([data]);
+            if (res.error) alert(res.error.message);
+            else { closeAppModal(); fetchApps(); }
         }
 
-        function editApp(id) {
-            const app = appsList.find(a => a.id === id);
-            if (app) openAppModal(app);
-        }
-
+        function editApp(id) { openAppModal(appsList.find(a => a.id === id)); }
         async function deleteApp(id) {
-            if (!confirm('Are you sure you want to delete this application?')) return;
-            const { error } = await supabaseClient.from('apps').delete().eq('id', id);
-            if (error) {
-                alert('Delete failed: ' + error.message);
-            } else {
+            if (!confirm('Delete app?')) return;
+            if (supabaseClient) {
+                await supabaseClient.from('apps').delete().eq('id', id);
                 fetchApps();
             }
         }
 
         function handleContactSubmit(e) {
             e.preventDefault();
-            alert('Thank you for your message! Yousuf Kakar will review it soon.');
+            alert('Thank you! Message sent.');
             e.target.reset();
         }
+
+        renderApps();
     </script>
 </body>
 </html>
