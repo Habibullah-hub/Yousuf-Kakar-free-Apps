@@ -329,7 +329,7 @@ html,body{background:#f7f7f7;color:#242424}
 </head>
 <body>
 <div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
-<header class="top"><div class="wrap nav"><div class="brand"><button class="mark" id="skAdminButton" type="button" aria-label="Admin Login" title="Admin Login">SK</button><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
+<header class="top"><div class="wrap nav"><div class="brand"><button class="mark" id="skAdminButton" type="button" aria-label="Admin Login" title="Admin Login" onclick="openAuthModal()">SK</button><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
  <button class="category-toggle" id="categoryToggle" type="button" aria-expanded="false" aria-controls="categoryMenu">☰ Browse All Categories <span>▾</span></button>
  <div class="category-menu hidden" id="categoryMenu">
   <a href="#tools" data-search="ai tools artificial intelligence">✦ AI Tools</a>
@@ -408,11 +408,13 @@ html,body{background:#f7f7f7;color:#242424}
     <!-- MODAL: AUTH -->
     <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-[#01120d] border border-emerald-900/80 rounded-3xl p-6 max-w-xs w-full space-y-4 relative">
-            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            <button type="button" onclick="closeAuthModal()" aria-label="Close Admin Login" title="Close" class="absolute top-3 right-3 w-9 h-9 rounded-full border border-emerald-800 bg-[#10251a] text-white text-2xl leading-none flex items-center justify-center">×</button>
             <h3 class="text-lg font-bold text-white text-center">Admin Login</h3>
             <form onsubmit="handleAdminLogin(event)" class="space-y-3">
-                <input type="email" id="adminEmail" required placeholder="Admin Email" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
-                <input type="password" id="adminPass" required placeholder="Password" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <label for="adminEmail" class="block text-xs font-semibold text-emerald-200">Admin Email</label>
+                <input type="email" id="adminEmail" required placeholder="Enter admin email" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
+                <label for="adminPass" class="block text-xs font-semibold text-emerald-200">Password</label>
+                <input type="password" id="adminPass" required placeholder="Enter password" class="w-full px-3 py-2 bg-[#021812] border border-emerald-950 rounded-xl text-xs text-white">
                 <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Sign In</button>
             </form>
         </div>
