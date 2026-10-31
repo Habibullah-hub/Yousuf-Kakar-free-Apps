@@ -656,6 +656,24 @@ body.news-reader-open{overflow:hidden}
 .news-article-help{margin:0;padding:12px 14px;background:#f2f7fb;color:#52677d;font-size:12px;line-height:1.6}
 @media(max-width:600px){.news-full-article-actions{width:calc(100% - 28px)}.news-article-panel{width:calc(100% - 20px)}#newsArticleFrame{height:72vh;min-height:420px}.news-article-panel-head{align-items:flex-start;flex-direction:column}}
 </style>
+<style>
+/* Repair clickable News language picker and force visible category edges */
+.news-section .news-language-control .news-language-chevron{pointer-events:auto!important;z-index:3;right:3px;width:38px;height:38px;display:grid;place-items:center;border:0!important;border-radius:4px!important;background:transparent!important;color:#fff!important;cursor:pointer!important;font-size:18px!important}
+.news-section .news-language-choices{position:relative;z-index:20;max-height:260px;overflow-y:auto;margin-top:6px;border:1px solid #c8d8e6;border-radius:6px;background:#fff;box-shadow:0 8px 24px #102b451c}
+.news-section .news-language-choices .language-choice{width:100%;text-align:left;padding:9px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff;color:#183653;cursor:pointer}
+.news-section .news-language-choices .language-choice:hover,.news-section .news-language-choices .language-choice:focus{background:#eaf4fc;color:#005a9e}
+.news-section .news-result-card{border:1px solid #cbd5e1!important;border-left:5px solid #8a9aaa!important;border-radius:8px!important}
+.news-section .news-result-card[data-news-tone="publisher"]{border-color:#d62828!important;border-left-color:#d62828!important}
+.news-section .news-result-card[data-news-tone="politics"]{border-color:#c43b45!important;border-left-color:#c43b45!important}
+.news-section .news-result-card[data-news-tone="business"]{border-color:#b88922!important;border-left-color:#b88922!important}
+.news-section .news-result-card[data-news-tone="sports"]{border-color:#238653!important;border-left-color:#238653!important}
+.news-section .news-result-card[data-news-tone="technology"]{border-color:#2476c7!important;border-left-color:#2476c7!important}
+.news-section .news-result-card[data-news-tone="entertainment"]{border-color:#8754b5!important;border-left-color:#8754b5!important}
+.news-section .news-result-card[data-news-tone="world"]{border-color:#168b91!important;border-left-color:#168b91!important}
+.news-section .news-result-card[data-news-tone="general"]{border-color:#8a9aaa!important;border-left-color:#8a9aaa!important}
+.news-section .news-result-card:hover{box-shadow:0 5px 18px #06172c20!important;transform:translateY(-1px)}
+@media(max-width:600px){.news-section .news-language-choices{max-height:220px}}
+</style>
 </head>
 <body>
 <div id="google_translate_element" aria-hidden="true"></div><div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
@@ -712,7 +730,7 @@ body.news-reader-open{overflow:hidden}
  <div class="section-head"><div><h2>World News</h2><p>Search international headlines and read available news summaries here without leaving SK Cyber Hub.</p></div></div>
  <div class="news-search-panel">
   <label for="newsQuery">Search any news topic</label>
-  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><button id="newsLanguageDropdownButton" class="news-language-chevron" type="button" aria-label="Show all news languages" title="Show all languages" aria-expanded="false">▾</button></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
+  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><button id="newsLanguageDropdownButton" class="news-language-chevron" type="button" aria-label="Show all news languages" title="Show all languages" aria-expanded="false">▾</button></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><datalist id="newsLanguageOptions"></datalist><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
   <p class="news-hint">Exact matches appear first, followed by related stories. Try English search words for the widest coverage.</p>
  </div>
  <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
@@ -1080,6 +1098,29 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   const cacheKey=source+'|'+target+'|'+textValue;
   if(translationCache.has(cacheKey))return translationCache.get(cacheKey);
   const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(source)+'&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(textValue);
+  try{
+   const response=await Promise.race([fetch(url,{cache:'no-store'}),timeout(6500)]);
+   if(!response.ok)throw new Error('Primary translation service unavailable');
+   const data=await response.json();
+   const translated=Array.isArray(data[0])?data[0].map(part=>part[0]||'').join(''):'';
+   if(!translated.trim())throw new Error('Empty translation response');
+   translationCache.set(cacheKey,translated);if(translationCache.size>150)translationCache.delete(translationCache.keys().next().value);
+   return translated;
+  }catch(primaryError){
+   const fallbackUrl='https://api.mymemory.translated.net/get?q='+encodeURIComponent(textValue)+'&langpair=auto%7C'+encodeURIComponent(target);
+   const fallback=await Promise.race([fetch(fallbackUrl,{cache:'no-store'}),timeout(6500)]);
+   if(!fallback.ok)throw new Error('Translation services unavailable');
+   const data=await fallback.json();
+   const translated=data?.responseData?.translatedText;
+   if(!translated||data?.responseStatus&&Number(data.responseStatus)!==200)throw new Error('No translation returned');
+   translationCache.set(cacheKey,translated);if(translationCache.size>150)translationCache.delete(translationCache.keys().next().value);
+   return translated;
+  }
+ }
+  const textValue=cleanText(value);if(!textValue)return textValue;
+  const cacheKey=source+'|'+target+'|'+textValue;
+  if(translationCache.has(cacheKey))return translationCache.get(cacheKey);
+  const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(source)+'&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(textValue);
   const response=await Promise.race([fetch(url,{cache:'default'}),timeout(5000)]);if(!response.ok)throw new Error('Translation service unavailable');
   const data=await response.json();const translated=Array.isArray(data[0])?data[0].map(part=>part[0]||'').join(''):textValue;
   translationCache.set(cacheKey,translated);if(translationCache.size>150)translationCache.delete(translationCache.keys().next().value);
@@ -1148,6 +1189,14 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  }
  async function shareNews(item=null){const title=item?(item.translatedTitle||cleanText(item.title)||'World News'):(document.getElementById('newsReaderTitle').textContent||'World News');const summary=item?(item.translatedDescription||cleanText(item.description||item.content||'')):(document.getElementById('newsReaderBody').textContent||'');const pageUrl=window.location.href.split('#')[0]+'#news';const shareText=title+'\n\n'+summary.slice(0,420)+'\n\nSK CYBER HUB · SAAD YOUSUF KAKAR\n'+pageUrl;try{const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;const ctx=canvas.getContext('2d');ctx.fillStyle='#f4f8fb';ctx.fillRect(0,0,1080,1350);ctx.fillStyle='#0067b8';ctx.fillRect(0,0,1080,250);ctx.fillStyle='#ffffff';ctx.fillRect(70,65,112,112);ctx.fillStyle='#0067b8';ctx.font='bold 50px Arial';ctx.textAlign='center';ctx.fillText('SK',126,137);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='bold 43px Arial';ctx.fillText('SK CYBER HUB',220,112);ctx.font='26px Arial';ctx.fillText('SAAD YOUSUF KAKAR',220,160);ctx.fillStyle='#075b98';ctx.font='bold 29px Arial';ctx.fillText('WORLD NEWS',75,330);ctx.fillStyle='#172b3a';ctx.font='bold 48px Arial';let y=420;const drawWrapped=(value,font,lineHeight,maxLines)=>{ctx.font=font;const words=String(value||'').split(/\s+/);let line='',count=0;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>920&&line){ctx.fillText(line,75,y);y+=lineHeight;line=word;if(++count>=maxLines)return;}else line=test;}if(line&&count<maxLines){ctx.fillText(line,75,y);y+=lineHeight;}};drawWrapped(title,'bold 48px Arial',62,5);y+=24;ctx.fillStyle='#455866';drawWrapped(summary.slice(0,500),'30px Arial',46,8);ctx.fillStyle='#0067b8';ctx.fillRect(75,1190,930,3);ctx.fillStyle='#075b98';ctx.font='bold 28px Arial';ctx.fillText('Read more on SK CYBER HUB',75,1250);ctx.font='24px Arial';ctx.fillText(pageUrl,75,1300);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(blob&&navigator.share&&typeof File!=='undefined'){const file=new File([blob],'SK-Cyber-Hub-News.png',{type:'image/png'});if(!navigator.canShare||navigator.canShare({files:[file]})){await navigator.share({files:[file],title,text:shareText});return;}}if(navigator.share){await navigator.share({title,text:shareText,url:pageUrl});return;}if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareText);status.textContent='Branded news details and website link copied. Paste into WhatsApp, Facebook or your status.';return;}status.textContent='Sharing is unavailable. Website link: '+pageUrl;}catch(error){if(error?.name!=='AbortError')status.textContent='Sharing failed. Website link: '+pageUrl;}}
  document.getElementById('closeNewsReader').addEventListener('click',closeReader);
+ const newsNavigationLink=document.querySelector('.news-nav-link');
+ if(newsNavigationLink)newsNavigationLink.addEventListener('click',event=>{
+  const newsSection=document.getElementById('news');
+  if(!newsSection)return;
+  event.preventDefault();
+  history.replaceState(null,'','#news');
+  newsSection.scrollIntoView({behavior:'smooth',block:'start'});
+ });
  fullArticleButton.addEventListener('click',()=>{
   const sourceUrl=publisherFallback.href;
   if(!sourceUrl||sourceUrl==='#')return;
