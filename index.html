@@ -630,11 +630,11 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  const exactResults=document.getElementById('newsExactResults');
  const relatedResults=document.getElementById('newsRelatedResults');
  const reader=document.getElementById('newsReader');
- const newsLanguageSelect=document.getElementById('newsLanguageSelect');
+ const newsLanguageSelect=document.getElementById('newsLanguageSelect');try{newsLanguageSelect.value=sessionStorage.getItem('skcyberhub_news_language_session')||'en';}catch(e){}
  const applyNewsLanguage=document.getElementById('applyNewsLanguage');
  let searchSequence=0;
  const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();
- const makeFeedUrl=q=>{const lang=newsLanguageSelect.value||'en';return 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl='+encodeURIComponent(lang)+'&gl=US&ceid=US:'+encodeURIComponent(lang);};
+ const makeFeedUrl=q=>'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en&gl=US&ceid=US:en';
  async function fetchFeed(q){
   const rss=makeFeedUrl(q);
   try{const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(rss),{cache:'no-store'});if(r.ok){const xml=await r.text(),doc=new DOMParser().parseFromString(xml,'text/xml');if(!doc.querySelector('parsererror'))return [...doc.querySelectorAll('item')].map(n=>({title:n.querySelector('title')?.textContent||'',description:n.querySelector('description')?.textContent||'',link:n.querySelector('link')?.textContent||'',author:n.querySelector('source')?.textContent||'Google News',pubDate:n.querySelector('pubDate')?.textContent||''}));}}catch(e){console.warn('Primary feed proxy failed',e);}
@@ -642,18 +642,35 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  }
  function makeCard(item){
   const button=document.createElement('button');button.type='button';button.className='news-result-card';
-  const title=document.createElement('strong');title.textContent=cleanText(item.title)||'Untitled news';
-  const description=document.createElement('p');description.textContent=cleanText(item.description||item.content||'News summary is not available in this feed.');
-  const meta=document.createElement('small');meta.textContent=(cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'Latest update');
+  const title=document.createElement('strong');title.textContent=item.translatedTitle||cleanText(item.title)||'Untitled news';
+  const description=document.createElement('p');description.textContent=item.translatedDescription||cleanText(item.description||item.content||'News summary is not available in this feed.');
+  const meta=document.createElement('small');meta.textContent=(item.translatedAuthor||cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'Latest update');
   button.append(title,description,meta);
   button.addEventListener('click',()=>openReader(item));
   return button;
  }
+ async function translateText(value,target){
+  const textValue=cleanText(value);if(!textValue||target==='en')return textValue;
+  const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(textValue);
+  const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('Translation service unavailable');
+  const data=await response.json();return Array.isArray(data[0])?data[0].map(part=>part[0]||'').join(''):textValue;
+ }
+ async function translateItems(items,target){
+  if(target==='en')return items;
+  const output=[];for(let i=0;i<items.length;i+=4){
+   const batch=items.slice(i,i+4);
+   const translated=await Promise.all(batch.map(async item=>{
+    const originalTitle=cleanText(item.title),originalDescription=cleanText(item.description||item.content||'');
+    try{const combined=await translateText(originalTitle+'\n[SKNEWS_SPLIT]\n'+originalDescription,target);const parts=combined.split('[SKNEWS_SPLIT]');return {...item,translatedTitle:parts[0]?.trim()||originalTitle,translatedDescription:parts.slice(1).join('[SKNEWS_SPLIT]').trim()||originalDescription};}
+    catch(error){return {...item,translatedTitle:originalTitle,translatedDescription:originalDescription,translationFailed:true};}
+   }));output.push(...translated);
+  }return output;
+ }
  function openReader(item){
-  document.getElementById('newsReaderTitle').textContent=cleanText(item.title)||'News';
-  document.getElementById('newsReaderMeta').textContent=(cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'');
+  document.getElementById('newsReaderTitle').textContent=item.translatedTitle||cleanText(item.title)||'News';
+  document.getElementById('newsReaderMeta').textContent=(item.translatedAuthor||cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'');
   const body=document.getElementById('newsReaderBody');
-  body.textContent=cleanText(item.description||item.content||'The publisher has not supplied a readable summary in this feed.');
+  body.textContent=item.translatedDescription||cleanText(item.description||item.content||'The publisher has not supplied a readable summary in this feed.');
   reader.classList.remove('hidden');
   reader.scrollIntoView({behavior:'smooth',block:'start'});
  }
@@ -667,18 +684,23 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   searchButton.disabled=true;searchButton.textContent='Searching…';
   exactGroup.classList.add('hidden');relatedGroup.classList.add('hidden');reader.classList.add('hidden');
   exactResults.replaceChildren();relatedResults.replaceChildren();
-  status.textContent='Searching for “'+q+'” in '+(newsSearch.value||'English')+'…';
+  status.textContent='Searching news, then translating into '+(newsSearch.value||'English')+'…';
   try{
    const feeds=await Promise.all([fetchFeed(q),fetchFeed(q+' Pakistan')]);if(requestId!==searchSequence)return;
    const seen=new Set(),exact=[],related=[],terms=q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
    feeds.flat().forEach(item=>{const title=cleanText(item.title).toLocaleLowerCase(),desc=cleanText(item.description||item.content||'').toLocaleLowerCase(),key=cleanText(item.title)+'|'+(item.pubDate||'');if(!title||seen.has(key))return;seen.add(key);const phrase=title.includes(q.toLocaleLowerCase()),hits=terms.filter(t=>title.includes(t)||desc.includes(t)).length;if(phrase||hits===terms.length)exact.push(item);else if(hits>0)related.push(item);});
-   exact.slice(0,12).forEach(item=>exactResults.appendChild(makeCard(item)));
-   related.slice(0,18).forEach(item=>relatedResults.appendChild(makeCard(item)));
+   const targetLanguage=newsLanguageSelect.value||'en';
+   status.textContent='Translating news into '+(newsSearch.value||'English')+'…';
+   const translatedExact=await translateItems(exact.slice(0,12),targetLanguage);
+   const translatedRelated=await translateItems(related.slice(0,18),targetLanguage);
+   if(requestId!==searchSequence)return;
+   translatedExact.forEach(item=>exactResults.appendChild(makeCard(item)));
+   translatedRelated.forEach(item=>relatedResults.appendChild(makeCard(item)));
    document.getElementById('newsExactCount').textContent=exact.length;
    document.getElementById('newsRelatedCount').textContent=related.length;
    exactGroup.classList.toggle('hidden',exact.length===0);
    relatedGroup.classList.toggle('hidden',related.length===0);
-   status.textContent=(exact.length+related.length)?(exact.length+' exact and '+related.length+' related stories found. Select any headline to read its available summary here.'):'No stories found for this search. Try a shorter or different keyword.';
+   status.textContent=(exact.length+related.length)?(exact.length+' exact and '+related.length+' related stories found. News titles and available summaries are shown in '+(newsSearch.value||'English')+'.'):'No stories found for this search. Try a shorter or different keyword.';
   }catch(error){
    if(requestId!==searchSequence)return;
    status.textContent='News could not be loaded right now. Please try again in a moment. The live news feed may be temporarily unavailable.';
@@ -1098,10 +1120,10 @@ document.getElementById('clearResource').addEventListener('click',()=>{
  addOptions('siteLanguageOptions');addOptions('newsLanguageOptions');
  function findLang(value){const v=value.trim().toLowerCase();return languages.find(([c,n])=>c.toLowerCase()===v||n.toLowerCase()===v);}
  function shortCode(lang){const n=languages.find(x=>x[0]===lang)?.[1]||lang;return n.replace(/[^a-z]/gi,'').slice(0,3).toUpperCase();}
- function applyLanguage(lang,remember=true){if(!languages.some(x=>x[0]===lang))return;current=lang;siteSelect.value=lang;newsSelect.value=lang;const name=languages.find(x=>x[0]===lang)[1];siteSearch.value=name;newsSearch.value=name;toggle.textContent='🌐 '+shortCode(lang);if(remember){try{sessionStorage.setItem(storageKey,lang);}catch(e){}}document.cookie='googtrans='+encodeURIComponent('/en/'+lang)+';path=/;SameSite=Lax';const gs=document.querySelector('#google_translate_element select');if(gs){gs.value=lang;gs.dispatchEvent(new Event('change'));}else if(lang==='en')document.cookie='googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';}
+ function applyLanguage(lang,remember=true){if(!languages.some(x=>x[0]===lang))return;current=lang;siteSelect.value=lang;const name=languages.find(x=>x[0]===lang)[1];siteSearch.value=name;toggle.textContent='🌐 '+shortCode(lang);if(remember){try{sessionStorage.setItem(storageKey,lang);}catch(e){}}document.cookie='googtrans='+encodeURIComponent('/en/'+lang)+';path=/;SameSite=Lax';const gs=document.querySelector('#google_translate_element select');if(gs){gs.value=lang;gs.dispatchEvent(new Event('change'));}else if(lang==='en')document.cookie='googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';}
  siteSearch.addEventListener('change',()=>{const x=findLang(siteSearch.value);if(x){applyLanguage(x[0]);panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');}});
  siteSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();siteSearch.dispatchEvent(new Event('change'));}});
- newsSearch.addEventListener('change',()=>{const x=findLang(newsSearch.value);if(x)newsSelect.value=x[0];});
+ newsSearch.addEventListener('change',()=>{const x=findLang(newsSearch.value);if(x){newsSelect.value=x[0];try{sessionStorage.setItem('skcyberhub_news_language_session',x[0]);}catch(e){}}});
  newsSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();newsSearch.dispatchEvent(new Event('change'));}});
  toggle.addEventListener('click',()=>{const opening=panel.classList.contains('hidden');panel.classList.toggle('hidden',!opening);toggle.setAttribute('aria-expanded',String(opening));if(opening)siteSearch.focus();});
  document.addEventListener('click',e=>{if(!panel.contains(e.target)&&!toggle.contains(e.target)){panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');}});
