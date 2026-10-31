@@ -615,6 +615,27 @@ body.news-reader-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
  .news-query-control #newsSearchButton.is-loading svg,.news-status.is-loading:before{animation:none}
 }
+
+/* Unified News language search + compact dropdown */
+.news-section .news-language-row{position:relative;display:block;margin:0 0 12px;padding:0;border:0;background:transparent}
+.news-section .news-language-row>label{display:block;margin:0 0 7px;color:#183653!important}
+.news-section .news-language-control{display:flex;align-items:center;min-height:44px;padding-right:3px;border:1px solid #c8d5df!important;border-radius:6px!important;background:#fff!important;box-shadow:none!important;overflow:hidden}
+.news-section .news-language-control:focus-within{border-color:#0067b8!important;box-shadow:0 0 0 2px #0067b81c!important}
+.news-section .news-language-control .news-language-globe{padding-left:12px;color:#0067b8!important}
+.news-section .news-language-control input{flex:1;width:100%;min-width:0;height:42px!important;padding:0 10px!important;color:#183044!important;background:transparent!important;font-size:13px!important;font-weight:500!important}
+.news-section .news-language-control input::placeholder{color:#738394!important}
+.news-section .news-language-chevron{flex:none;width:32px;height:32px;margin:0 3px 0 0;padding:0;border:0!important;border-left:1px solid #e0e8ef!important;border-radius:4px!important;background:#f2f7fb!important;color:#075b98!important;font-size:17px;cursor:pointer;transition:background .18s,transform .18s}
+.news-section .news-language-chevron:hover,.news-section .news-language-chevron[aria-expanded="true"]{background:#e2f1fb!important}
+.news-section .news-language-chevron[aria-expanded="true"]{transform:rotate(180deg)}
+.news-section .news-language-choices{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:80;max-height:260px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:0;padding:8px;border:1px solid #cbd9e5;border-radius:7px;background:#fff;box-shadow:0 12px 28px #18365324}
+.news-section .news-language-choices.hidden{display:none!important}
+.news-section .news-language-choices .language-choice{padding:9px 10px;text-align:left}
+.news-section .news-language-row select{position:absolute!important;width:1px!important;height:1px!important;clip:rect(0,0,0,0)!important;overflow:hidden!important}
+@media(max-width:600px){
+ .news-section .news-language-control{min-height:42px}
+ .news-section .news-language-control input{height:40px!important;font-size:12px!important}
+ .news-section .news-language-choices{max-height:220px;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -680,7 +701,7 @@ body.news-reader-open{overflow:hidden}
  <div class="section-head"><div><h2>World News</h2><p>Search international headlines and read available news summaries here without leaving SK Cyber Hub.</p></div></div>
  <div class="news-search-panel">
   <label for="newsQuery">Search any news topic</label>
-  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><span class="news-language-chevron" aria-hidden="true">▾</span></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
+  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><button id="newsLanguageDropdownButton" class="news-language-chevron" type="button" aria-label="Show all news languages" title="Show all languages" aria-expanded="false">▾</button></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
   <p class="news-hint">Exact matches appear first, followed by related stories. Try English search words for the widest coverage.</p>
  </div>
  <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
@@ -1589,22 +1610,24 @@ document.getElementById('clearResource').addEventListener('click',()=>{
  function shortCode(lang){const n=languages.find(x=>x[0]===lang)?.[1]||lang;return n.replace(/[^a-z]/gi,'').slice(0,3).toUpperCase();}
  function applyLanguage(lang,remember=true){if(!languages.some(x=>x[0]===lang))return;current=lang;siteSelect.value=lang;const name=languages.find(x=>x[0]===lang)[1];siteSearch.value=name;toggle.textContent='🌐 '+shortCode(lang);if(remember){try{sessionStorage.setItem(storageKey,lang);}catch(e){}}document.cookie='googtrans='+encodeURIComponent('/en/'+lang)+';path=/;SameSite=Lax';const gs=document.querySelector('#google_translate_element select');if(gs){gs.value=lang;gs.dispatchEvent(new Event('change'));}else if(lang==='en')document.cookie='googtrans=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';}
  const siteChoices=document.getElementById('siteLanguageChoices'),newsChoices=document.getElementById('newsLanguageChoices');
+ const newsDropdown=document.getElementById('newsLanguageDropdownButton');
  function chooseSiteLanguage(code,name){siteSearch.value=name;applyLanguage(code);panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');}
- function chooseNewsLanguage(code,name){newsSelect.value=code;newsSearch.value=name;try{sessionStorage.setItem('skcyberhub_news_language_session',code);}catch(e){}newsChoices.classList.add('hidden');}
+ function chooseNewsLanguage(code,name){newsSelect.value=code;newsSearch.value=name;try{sessionStorage.setItem('skcyberhub_news_language_session',code);}catch(e){}newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');window.dispatchEvent(new CustomEvent('skcyberhub-news-language-change',{detail:{code,name}}));}
  fillChoiceList(siteChoices,'',(code,name)=>chooseSiteLanguage(code,name));
  fillChoiceList(newsChoices,'',(code,name)=>chooseNewsLanguage(code,name));
  siteSearch.addEventListener('focus',()=>{if(findLang(siteSearch.value))siteSearch.value='';fillChoiceList(siteChoices,siteSearch.value,(code,name)=>chooseSiteLanguage(code,name));siteChoices.classList.remove('hidden');});
  siteSearch.addEventListener('input',()=>{fillChoiceList(siteChoices,siteSearch.value,(code,name)=>chooseSiteLanguage(code,name));siteChoices.classList.remove('hidden');});
  siteSearch.addEventListener('change',()=>{const x=findLang(siteSearch.value);if(x)chooseSiteLanguage(x[0],x[1]);});
  siteSearch.addEventListener('blur',()=>{setTimeout(()=>{if(!panel.contains(document.activeElement))siteChoices.classList.add('hidden');},140);});
- newsSearch.addEventListener('focus',()=>{if(findLang(newsSearch.value))newsSearch.value='';fillChoiceList(newsChoices,newsSearch.value,(code,name)=>chooseNewsLanguage(code,name));newsChoices.classList.remove('hidden');});
- newsSearch.addEventListener('input',()=>{fillChoiceList(newsChoices,newsSearch.value,(code,name)=>chooseNewsLanguage(code,name));newsChoices.classList.remove('hidden');});
+ newsSearch.addEventListener('focus',()=>{if(findLang(newsSearch.value))newsSearch.value='';fillChoiceList(newsChoices,newsSearch.value,(code,name)=>chooseNewsLanguage(code,name));newsChoices.classList.remove('hidden');newsDropdown.setAttribute('aria-expanded','true');});
+ newsSearch.addEventListener('input',()=>{fillChoiceList(newsChoices,newsSearch.value,(code,name)=>chooseNewsLanguage(code,name));newsChoices.classList.remove('hidden');newsDropdown.setAttribute('aria-expanded','true');});
  newsSearch.addEventListener('change',()=>{const x=findLang(newsSearch.value);if(x)chooseNewsLanguage(x[0],x[1]);});
- newsSearch.addEventListener('blur',()=>{setTimeout(()=>{if(!document.activeElement?.closest('#newsLanguageChoices'))newsChoices.classList.add('hidden');},140);});
+ newsSearch.addEventListener('blur',()=>{setTimeout(()=>{if(!document.activeElement?.closest('#newsLanguageChoices')&&document.activeElement!==newsDropdown){newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');}},180);});
+ newsDropdown.addEventListener('click',()=>{const opening=newsChoices.classList.contains('hidden');if(opening){newsSearch.value='';fillChoiceList(newsChoices,'',(code,name)=>chooseNewsLanguage(code,name));newsChoices.classList.remove('hidden');newsDropdown.setAttribute('aria-expanded','true');newsSearch.focus();}else{newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');}});
  siteSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();siteSearch.dispatchEvent(new Event('change'));}});
- newsSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const x=findLang(newsSearch.value);if(x)chooseNewsLanguage(x[0],x[1]);else{newsSearch.setCustomValidity('Please choose a supported language name.');newsSearch.reportValidity();newsSearch.setCustomValidity('');}}});
+ newsSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const x=findLang(newsSearch.value);if(x)chooseNewsLanguage(x[0],x[1]);}});
  toggle.addEventListener('click',()=>{const opening=panel.classList.contains('hidden');panel.classList.toggle('hidden',!opening);toggle.setAttribute('aria-expanded',String(opening));if(opening){siteSearch.value='';fillChoiceList(siteChoices,'',(code,name)=>chooseSiteLanguage(code,name));siteChoices.classList.remove('hidden');siteSearch.focus();}});
- document.addEventListener('click',e=>{if(!panel.contains(e.target)&&!toggle.contains(e.target)){panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');siteChoices.classList.add('hidden');}if(!e.target.closest('.news-language-row'))newsChoices.classList.add('hidden');});
+ document.addEventListener('click',e=>{if(!panel.contains(e.target)&&!toggle.contains(e.target)){panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');siteChoices.classList.add('hidden');}if(!e.target.closest('.news-language-row')){newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');}});
  window.googleTranslateElementInit=function(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:languages.map(x=>x[0]).join(','),autoDisplay:false,layout:google.translate.TranslateElement.InlineLayout.SIMPLE},'google_translate_element');if(current!=='en')setTimeout(()=>applyLanguage(current,false),800);};
  if(current!=='en')document.cookie='googtrans='+encodeURIComponent('/en/'+current)+';path=/;SameSite=Lax';applyLanguage(current,false);
 })();</script>
