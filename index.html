@@ -748,23 +748,23 @@ body{top:0!important}
  $('bulkImportBtn').addEventListener('click',async()=>{
   const valid=rows.filter(r=>r.name&&r.download_url);
   if(!valid.length){setStatus('Pehle Preview Apps dabayein aur valid rows check karein.');return;}
-  if(!window.supabaseClient){setStatus('Supabase connection available nahi. Admin login aur database connection check karein.');return;}
-  if(!window.currentUser){setStatus('Import sirf Admin login ke baad ho sakta hai.');return;}
+  if(typeof supabaseClient==='undefined'||!supabaseClient){setStatus('Supabase connection available nahi. Admin login aur database connection check karein.');return;}
+  if(typeof currentUser==='undefined'||!currentUser){setStatus('Import sirf Admin login ke baad ho sakta hai.');return;}
   if(!confirm(valid.length+' apps database mein add karni hain?'))return;
   const button=$('bulkImportBtn');button.disabled=true;let done=0,failed=0;const errors=[];
   try{
    for(let i=0;i<valid.length;i+=20){
     const batch=valid.slice(i,i+20);
-    let result=await window.supabaseClient.from('apps').insert(batch);
+    let result=await supabaseClient.from('apps').insert(batch);
     if(result.error&&/platform.*column|column.*platform/i.test(result.error.message)){
      const withoutPlatform=batch.map(({platform,...rest})=>rest);
-     result=await window.supabaseClient.from('apps').insert(withoutPlatform);
+     result=await supabaseClient.from('apps').insert(withoutPlatform);
     }
     if(result.error){failed+=batch.length;errors.push(result.error.message);}
     else done+=batch.length;
     setStatus('Import progress: '+(done+failed)+' / '+valid.length+' · Added: '+done+' · Failed: '+failed);
    }
-   if(typeof window.fetchApps==='function')await window.fetchApps();
+   if(typeof fetchApps==='function')await fetchApps();
    setStatus('Complete — Added: '+done+' · Failed: '+failed+(errors.length?' · First error: '+errors[0]:''));
   }catch(err){setStatus('Import ruk gaya: '+(err.message||'Unknown error'));}
   finally{button.disabled=false;}
