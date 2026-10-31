@@ -383,6 +383,20 @@ body{top:0!important}
 .news-language-row label{margin:0;white-space:nowrap}
 .news-language-row select{max-width:220px}
 @media(max-width:600px){.nav-actions{gap:6px}.language-toggle{padding:8px;font-size:11px}.site-language-panel{top:64px;right:10px}.news-language-row{flex-wrap:wrap}.news-language-row label{width:100%}.news-language-row select{flex:1;max-width:none}}
+/* News translation selector styled to match the blue website language button */
+.news-language-row{display:block}
+.news-language-control{min-height:42px;border:1px solid #0067b8;border-radius:5px;background:#0067b8;box-shadow:0 2px 6px #0067b820}
+.news-language-control:focus-within{border-color:#005a9e;box-shadow:0 0 0 3px #0067b822}
+.news-language-globe{color:#fff;padding-left:13px}
+.news-language-control input{height:40px;color:#fff!important;font-weight:750;font-size:12px}
+.news-language-control input::placeholder{color:#e6f4ff}
+.news-language-chevron{right:13px;color:#fff}
+.news-language-row>label{color:#183653!important}
+@media(max-width:600px){.news-language-control{min-height:40px}.news-language-control input{height:38px;font-size:12px}}
+/* Cleaner editorial image treatment for every news card */
+.news-card-image{height:190px;object-fit:cover;object-position:center 35%;background:#e8eff5}
+.news-card-image-fallback{height:190px}
+.news-photo-credit{padding:0 2px;font-size:9px;line-height:1.4}
 /* Professional World News panel, accessible inputs and animated details */
 .news-section{position:relative;margin-top:22px;padding:25px 22px 30px;border:1px solid #c8d9ed;border-radius:12px;background:linear-gradient(135deg,#10243d 0%,#172e4b 52%,#203c5c 100%);box-shadow:0 12px 30px #0c23401c}
 .news-section .section-head{border-color:#ffffff26}
@@ -862,7 +876,46 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  function safeImageUrl(value){try{const u=new URL(String(value||''));return u.protocol==='https:'?u.href:'';}catch(e){return '';}}
  function getNewsImage(item){if(item.image)return safeImageUrl(item.image);const extra=item.thumbnail||item.enclosure?.link||item.enclosure?.url;if(extra&&safeImageUrl(extra))return safeImageUrl(extra);const raw=String(item.description||item.content||'');try{const doc=new DOMParser().parseFromString(raw,'text/html');const img=doc.querySelector('img[src]');if(img)return safeImageUrl(img.getAttribute('src'));}catch(e){}return '';}
  const photoCache=new Map();
- async function findNewsPhoto(item){const direct=getNewsImage(item);if(direct)return {url:direct,credit:item.photoCredit||'Image supplied by news feed'};const query=(queryInput.value.trim()+' '+cleanText(item.title).split(/\\s+/).slice(0,5).join(' ')).trim().slice(0,110);if(!query)return null;const key=query.toLowerCase();if(photoCache.has(key))return photoCache.get(key);try{const api='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=800&format=json&origin=*';const response=await Promise.race([fetch(api,{cache:'default'}),timeout(5000)]);if(!response.ok)throw new Error('Image search failed');const data=await response.json();const pages=Object.values(data.query?.pages||{});const best=pages.find(p=>/imran.?khan|khan.?imran/i.test(p.title||''))||pages[0];const info=best?.imageinfo?.[0];const url=safeImageUrl(info?.thumburl||info?.url);if(!url)return null;const meta=info.extmetadata||{};const credit=cleanText(meta.Artist?.value||meta.Credit?.value||'Wikimedia Commons');const license=cleanText(meta.LicenseShortName?.value||'');const result={url,credit:(credit+' '+license).trim()};photoCache.set(key,result);if(photoCache.size>80)photoCache.delete(photoCache.keys().next().value);return result;}catch(error){console.warn('Related news photo unavailable',error);return null;}}
+ async function findNewsPhoto(item){
+  const direct=getNewsImage(item);
+  if(direct)return {url:direct,credit:item.photoCredit||'Image supplied by news feed'};
+  const typed=cleanText(queryInput.value);
+  const headline=cleanText(item.title);
+  let subject=typed||headline;
+  if(/\\btrump\\b/i.test(subject))subject='Donald Trump';
+  else if(/\\bimran\\s+khan\\b/i.test(subject))subject='Imran Khan';
+  const candidates=[subject+' portrait',subject,headline.split(/\\s+/).slice(0,6).join(' ')].filter(Boolean);
+  const unique=[...new Set(candidates.map(x=>x.trim()).filter(Boolean))];
+  const key=(subject+'|'+headline).toLowerCase();
+  if(photoCache.has(key))return photoCache.get(key);
+  try{
+   let bestResult=null,bestScore=0;
+   const wanted=subject.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2);
+   for(const candidate of unique){
+    const api='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(candidate)+'&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
+    const response=await Promise.race([fetch(api,{cache:'default'}),timeout(5500)]);
+    if(!response.ok)continue;
+    const data=await response.json();
+    const pages=Object.values(data.query?.pages||{});
+    for(const page of pages){
+     const title=String(page.title||'').replace(/^File:/i,'').toLowerCase();
+     const score=wanted.reduce((n,word)=>n+(title.includes(word)?1:0),0);
+     const info=page.imageinfo?.[0],url=safeImageUrl(info?.thumburl||info?.url);
+     if(!url)continue;
+     const meta=info.extmetadata||{};
+     const credit=cleanText(meta.Artist?.value||meta.Credit?.value||'Wikimedia Commons');
+     const license=cleanText(meta.LicenseShortName?.value||'');
+     const candidateResult={url,credit:(credit+' '+license).trim(),source:'Wikimedia Commons'};
+     const weighted=score+(title.includes('portrait')?0.25:0)+(title.includes('official')?0.15:0);
+     if(weighted>bestScore){bestScore=weighted;bestResult=candidateResult;}
+    }
+    if(bestScore>=Math.max(1,wanted.length))break;
+   }
+   if(bestResult&&bestScore>0){photoCache.set(key,bestResult);if(photoCache.size>100)photoCache.delete(photoCache.keys().next().value);return bestResult;}
+   photoCache.set(key,null);if(photoCache.size>100)photoCache.delete(photoCache.keys().next().value);
+   return null;
+  }catch(error){console.warn('Related news photo unavailable',error);return null;}
+ }
  function makeImageFallback(item){const fallback=document.createElement('div');fallback.className='news-card-image-fallback';fallback.setAttribute('aria-label','News photo unavailable');fallback.textContent=(cleanText(item.author||item.title||'N').charAt(0)||'N').toUpperCase();return fallback;}
  function makeCard(item){
   const card=document.createElement('article');card.className='news-result-card';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Open news: '+cleanText(item.title));
