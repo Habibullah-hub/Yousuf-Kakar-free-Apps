@@ -887,42 +887,51 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  async function findNewsPhoto(item){
   const direct=getNewsImage(item);
   if(direct)return {url:direct,credit:item.photoCredit||'Image supplied by news feed'};
-  const typed=cleanText(queryInput.value);
   const headline=cleanText(item.title);
-  let subject=typed||headline;
-  if(/\btrump\b/i.test(subject))subject='Donald Trump';
-  else if(/\bimran\s+khan\b/i.test(subject))subject='Imran Khan';
-  const candidates=[subject+' portrait',subject,headline.split(/\s+/).slice(0,6).join(' ')].filter(Boolean);
-  const unique=[...new Set(candidates.map(x=>x.trim()).filter(Boolean))];
-  const key=(subject+'|'+headline).toLowerCase();
+  const description=cleanText(item.description||item.content||'').slice(0,500);
+  const typed=cleanText(queryInput.value);
+  // Important: use each article's own headline first. The search query is context only,
+  // otherwise every result for "Trump" can incorrectly receive the same portrait.
+  const articleText=(headline+' '+description).trim();
+  let subject=articleText||typed;
+  if(/\\btrump\\b/i.test(subject))subject='Donald Trump '+articleText;
+  else if(/\\bimran\\s+khan\\b/i.test(subject))subject='Imran Khan '+articleText;
+  const stopWords=new Set(['the','and','for','with','from','that','this','after','before','over','into','about','says','said','will','has','have','his','her','their','amid','what','when','where','how','new','latest','news','report','reports']);
+  const articleWords=[...new Set(headline.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2&&!stopWords.has(w)))];
+  const queryWords=typed.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2&&!stopWords.has(w));
+  const key=(headline+'|'+description.slice(0,180)).toLowerCase();
   if(photoCache.has(key))return photoCache.get(key);
+  const candidates=[headline,articleWords.slice(0,5).join(' '),articleWords.slice(0,3).join(' '),subject,typed].filter(Boolean);
+  const unique=[...new Set(candidates.map(x=>x.trim()).filter(Boolean))];
   try{
    let bestResult=null,bestScore=0;
-   const wanted=subject.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2);
    for(const candidate of unique){
-    const api='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(candidate)+'&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
+    const api='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(candidate)+'&gsrnamespace=6&gsrlimit=15&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1000&format=json&origin=*';
     const response=await Promise.race([fetch(api,{cache:'default'}),timeout(5500)]);
     if(!response.ok)continue;
     const data=await response.json();
     const pages=Object.values(data.query?.pages||{});
     for(const page of pages){
      const title=String(page.title||'').replace(/^File:/i,'').toLowerCase();
-     const score=wanted.reduce((n,word)=>n+(title.includes(word)?1:0),0);
+     const articleScore=articleWords.reduce((n,word)=>n+(title.includes(word)?2:0),0);
+     const contextScore=queryWords.reduce((n,word)=>n+(title.includes(word)?0.2:0),0);
      const info=page.imageinfo?.[0],url=safeImageUrl(info?.thumburl||info?.url);
      if(!url)continue;
      const meta=info.extmetadata||{};
      const credit=cleanText(meta.Artist?.value||meta.Credit?.value||'Wikimedia Commons');
      const license=cleanText(meta.LicenseShortName?.value||'');
      const candidateResult={url,credit:(credit+' '+license).trim(),source:'Wikimedia Commons'};
-     const weighted=score+(title.includes('portrait')?0.25:0)+(title.includes('official')?0.15:0);
+     const weighted=articleScore+contextScore+(title.includes('portrait')?0.15:0)+(title.includes('official')?0.1:0);
      if(weighted>bestScore){bestScore=weighted;bestResult=candidateResult;}
     }
-    if(bestScore>=Math.max(1,wanted.length))break;
+    if(bestScore>=Math.max(2,articleWords.slice(0,3).length*2))break;
    }
-   if(bestResult&&bestScore>0){photoCache.set(key,bestResult);if(photoCache.size>100)photoCache.delete(photoCache.keys().next().value);return bestResult;}
-   photoCache.set(key,null);if(photoCache.size>100)photoCache.delete(photoCache.keys().next().value);
+   // Only show a Commons image when its filename/title matches the article,
+   // rather than falling back to one generic search-term portrait.
+   if(bestResult&&bestScore>=2){photoCache.set(key,bestResult);if(photoCache.size>150)photoCache.delete(photoCache.keys().next().value);return bestResult;}
+   photoCache.set(key,null);if(photoCache.size>150)photoCache.delete(photoCache.keys().next().value);
    return null;
-  }catch(error){console.warn('Related news photo unavailable',error);return null;}
+  }catch(error){console.warn('Article-specific news photo unavailable',error);return null;}
  }
  function makeImageFallback(item){const fallback=document.createElement('div');fallback.className='news-card-image-fallback';fallback.setAttribute('aria-label','News photo unavailable');fallback.textContent=(cleanText(item.author||item.title||'N').charAt(0)||'N').toUpperCase();return fallback;}
  function makeCard(item){
