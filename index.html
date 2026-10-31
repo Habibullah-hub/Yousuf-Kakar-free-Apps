@@ -329,7 +329,7 @@ html,body{background:#f7f7f7;color:#242424}
 </head>
 <body>
 <div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
-<header class="top"><div class="wrap nav"><a class="brand" href="#"><span class="mark">SK</span><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></a><div id="authNavContainer"><button class="secondary" type="button" onclick="openAuthModal()">Admin Login</button></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
+<header class="top"><div class="wrap nav"><div class="brand"><button class="mark" id="skAdminButton" type="button" aria-label="Admin Login" title="Admin Login">SK</button><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
  <button class="category-toggle" id="categoryToggle" type="button" aria-expanded="false" aria-controls="categoryMenu">☰ Browse All Categories <span>▾</span></button>
  <div class="category-menu hidden" id="categoryMenu">
   <a href="#tools" data-search="ai tools artificial intelligence">✦ AI Tools</a>
@@ -628,18 +628,14 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         }
 
         function updateAuthUI() {
-            const container = document.getElementById('authNavContainer');
-            if (!container) return;
-            container.replaceChildren();
-            const action = document.createElement('button');
-            action.type = 'button';
-            action.className = currentUser ? 'secondary' : 'secondary';
-            action.textContent = currentUser ? 'Dashboard' : 'Admin Login';
-            action.addEventListener('click', () => {
+            const action = document.getElementById('skAdminButton');
+            if (!action) return;
+            action.setAttribute('aria-label', currentUser ? 'Admin Dashboard' : 'Admin Login');
+            action.title = currentUser ? 'Admin Dashboard' : 'Admin Login';
+            action.onclick = () => {
                 if (currentUser) switchTab('admin');
                 else openAuthModal();
-            });
-            container.appendChild(action);
+            };
         }
 
         async function fetchApps() {
