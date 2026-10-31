@@ -737,7 +737,7 @@ body{top:0!important}
    const file=$('bulkFile').files[0],paste=$('bulkLinks').value.trim();
    if(file){
     const buffer=await file.arrayBuffer();
-    if(/\.xlsx?$/i.test(file.name)&&window.XLSX){const wb=XLSX.read(buffer,{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(sheet,{defval:''}).map(normalizeRow);}
+    if(/\\.xlsx?$/i.test(file.name)){if(!window.XLSX)throw new Error('Excel reader load nahi hua. Internet on karke page refresh karein, ya file ko CSV format mein Save As karein.');const wb=XLSX.read(buffer,{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(sheet,{defval:''}).map(normalizeRow);}
     else rows=parseCSV(new TextDecoder().decode(buffer)).map(normalizeRow);
    }else if(paste) rows=fromPaste(paste);
    else {setStatus('Pehle links paste karein ya CSV/Excel file select karein.');return;}
