@@ -513,6 +513,14 @@ body{top:0!important}
 .bulk-status{margin-top:10px;padding:10px 12px;border:1px solid #c8dff0;border-radius:4px;background:#f2f8fc;color:#244b66;font-size:12px}
 .bulk-hint{font-size:11px!important;color:#657785!important}
 @media(max-width:760px){.bulk-panel{padding:13px}.bulk-grid{grid-template-columns:1fr}.bulk-grid .wide{grid-column:auto}.bulk-actions button{flex:1}}
+
+/* Final specificity pass: keep News translation picker identical to the site language button */
+.news-section .news-language-control{min-height:42px;border:1px solid #0067b8!important;border-radius:5px!important;background:#0067b8!important;box-shadow:0 2px 6px #0067b820}
+.news-section .news-language-control:focus-within{border-color:#005a9e!important;box-shadow:0 0 0 3px #0067b822!important}
+.news-section .news-language-control .news-language-globe{color:#fff!important}
+.news-section .news-language-control input{height:40px!important;color:#fff!important;background:transparent!important;font-weight:750!important;font-size:12px!important}
+.news-section .news-language-control input::placeholder{color:#e6f4ff!important}
+.news-section .news-language-control .news-language-chevron{color:#fff!important}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
