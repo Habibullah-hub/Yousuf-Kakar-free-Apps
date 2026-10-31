@@ -659,8 +659,12 @@ document.getElementById('clearResource').addEventListener('click',()=>{
             const modGrid = document.getElementById('modApkResources');
             const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
             const visibleApps = appsList.filter(app => currentUser || !supabaseClient || app.published === true);
+            // Keep Mod APK listings in their own section so they never appear twice.
             const filtered = visibleApps.filter(app => {
-                const matchCat = currentCat === 'All' || app.category === currentCat;
+                const isModApk = app.category === 'All Apps Mod APK';
+                const matchCat = currentCat === 'All'
+                    ? !isModApk
+                    : app.category === currentCat && !isModApk;
                 const matchSearch = (app.name || '').toLowerCase().includes(search) || (app.description || '').toLowerCase().includes(search);
                 return matchCat && matchSearch;
             });
@@ -742,7 +746,11 @@ document.getElementById('clearResource').addEventListener('click',()=>{
             grid.replaceChildren(...filtered.map(makeAppCard));
 
             if (modGrid) {
-                const modApps = visibleApps.filter(app => app.category === 'All Apps Mod APK');
+                const modApps = visibleApps.filter(app => {
+                    const matchCategory = currentCat === 'All' || currentCat === 'All Apps Mod APK';
+                    const matchSearch = (app.name || '').toLowerCase().includes(search) || (app.description || '').toLowerCase().includes(search);
+                    return app.category === 'All Apps Mod APK' && matchCategory && matchSearch;
+                });
                 modGrid.replaceChildren();
                 if (modApps.length) {
                     modApps.forEach(app => modGrid.appendChild(makeAppCard(app)));
