@@ -689,7 +689,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    const seen=new Set(),exact=[],related=[],terms=q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
    feeds.flat().forEach(item=>{const title=cleanText(item.title).toLocaleLowerCase(),desc=cleanText(item.description||item.content||'').toLocaleLowerCase(),key=cleanText(item.title)+'|'+(item.pubDate||'');if(!title||seen.has(key))return;seen.add(key);const phrase=title.includes(q.toLocaleLowerCase()),hits=terms.filter(t=>title.includes(t)||desc.includes(t)).length;if(phrase||hits===terms.length)exact.push(item);else if(hits>0)related.push(item);});
    const targetLanguage=newsLanguageSelect.value||'en';
-   status.textContent='Translating news into '+(newsSearch.value||'English')+'…';
+   status.textContent='Translating news into '+(newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English')+'…';
    const translatedExact=await translateItems(exact.slice(0,12),targetLanguage);
    const translatedRelated=await translateItems(related.slice(0,18),targetLanguage);
    if(requestId!==searchSequence)return;
@@ -699,7 +699,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    document.getElementById('newsRelatedCount').textContent=related.length;
    exactGroup.classList.toggle('hidden',exact.length===0);
    relatedGroup.classList.toggle('hidden',related.length===0);
-   status.textContent=(exact.length+related.length)?(exact.length+' exact and '+related.length+' related stories found. News titles and available summaries are shown in '+(newsSearch.value||'English')+'.'):'No stories found for this search. Try a shorter or different keyword.';
+   status.textContent=(exact.length+related.length)?(exact.length+' exact and '+related.length+' related stories found. News titles and available summaries are shown in '+(newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English')+'.'):'No stories found for this search. Try a shorter or different keyword.';
   }catch(error){
    if(requestId!==searchSequence)return;
    status.textContent='News could not be loaded right now. Please try again in a moment. The live news feed may be temporarily unavailable.';
