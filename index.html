@@ -763,8 +763,8 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   }));
  }
  function openReader(item){
-  const readerImage=document.getElementById('newsReaderImage'),imageUrl=getNewsImage(item);if(imageUrl){readerImage.src=imageUrl;readerImage.classList.remove('hidden');readerImage.onerror=()=>readerImage.classList.add('hidden');}else{readerImage.removeAttribute('src');readerImage.classList.add('hidden');}
-  document.getElementById('newsReaderTitle').textContent=item.translatedTitle||cleanText(item.title)||'News';
+  const readerImage=document.getElementById('newsReaderImage'),readerTitle=item.translatedTitle||cleanText(item.title)||'News',imageUrl=getNewsImage(item);if(imageUrl){readerImage.src=imageUrl;readerImage.classList.remove('hidden');readerImage.onerror=()=>readerImage.classList.add('hidden');}else{readerImage.removeAttribute('src');readerImage.classList.add('hidden');findNewsPhoto(item).then(photo=>{if(photo&&document.getElementById('newsReaderTitle').textContent===readerTitle){readerImage.src=photo.url;readerImage.title=photo.credit||'News photo';readerImage.classList.remove('hidden');}});}
+  document.getElementById('newsReaderTitle').textContent=readerTitle;
   document.getElementById('newsReaderMeta').textContent=(item.translatedAuthor||cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'');
   document.getElementById('newsReaderBody').textContent=item.translatedDescription||cleanText(item.description||item.content||'The publisher has not supplied a readable summary in this feed.');
   reader.classList.remove('hidden');reader.scrollIntoView({behavior:'smooth',block:'start'});
