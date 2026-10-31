@@ -585,6 +585,36 @@ body.news-reader-open{overflow:hidden}
 .news-section .news-language-choices .language-choice{min-height:36px}
 @media(max-width:600px){.news-section .news-language-control{min-height:44px}.news-section .news-language-control .news-language-globe{width:40px;height:42px}.news-section .news-language-control input{height:42px!important;font-size:13px!important}.news-section .news-language-choices{max-height:205px}}
 
+
+/* Clear, polished feedback while World News is searching */
+.news-query-control #newsSearchButton{
+ width:auto;min-width:94px;height:42px;gap:7px;padding:0 13px!important;
+ border-left:1px solid #dce7ef!important;background:#f0f7fc!important;
+ color:#075b98!important;font-size:12px;font-weight:750;white-space:nowrap;
+ transition:background .18s,color .18s,opacity .18s;
+}
+.news-query-control #newsSearchButton:hover{background:#e2f1fb!important;color:#004f86!important}
+.news-query-control #newsSearchButton svg{width:18px;height:18px;flex:none}
+.news-query-control #newsSearchButton.is-loading{
+ min-width:122px;background:#0067b8!important;color:#fff!important;
+ border-left-color:#0067b8!important;cursor:wait;opacity:1;
+}
+.news-query-control #newsSearchButton.is-loading svg{animation:newsSearchRotate .9s linear infinite;stroke:#fff}
+.news-query-control #newsSearchButton:disabled{cursor:wait}
+.news-status.is-loading{display:flex;align-items:center;gap:10px;border-color:#9fc9e6;background:#f0f8fe;color:#075b98}
+.news-status.is-loading:before{
+ content:"";width:15px;height:15px;flex:none;border:2px solid #b9d9ee;
+ border-top-color:#0067b8;border-radius:50%;animation:newsSearchRotate .75s linear infinite;
+}
+@keyframes newsSearchRotate{to{transform:rotate(360deg)}}
+@media(max-width:600px){
+ .news-query-control #newsSearchButton{min-width:78px;height:38px;padding:0 9px!important;font-size:11px}
+ .news-query-control #newsSearchButton.is-loading{min-width:105px}
+ .news-query-control #newsSearchButton svg{width:17px;height:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ .news-query-control #newsSearchButton.is-loading svg,.news-status.is-loading:before{animation:none}
+}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -650,7 +680,7 @@ body.news-reader-open{overflow:hidden}
  <div class="section-head"><div><h2>World News</h2><p>Search international headlines and read available news summaries here without leaving SK Cyber Hub.</p></div></div>
  <div class="news-search-panel">
   <label for="newsQuery">Search any news topic</label>
-  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><span class="news-language-chevron" aria-hidden="true">▾</span></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></button></div></div>
+  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><span class="news-language-chevron" aria-hidden="true">▾</span></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
   <p class="news-hint">Exact matches appear first, followed by related stories. Try English search words for the widest coverage.</p>
  </div>
  <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
@@ -1062,7 +1092,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   if(!spokenOrTyped){status.textContent='Please type a topic or use the microphone to speak.';queryInput.focus();return;}
   const requestId=++searchSequence,targetLanguage=newsLanguageSelect.value||'en';
   const languageName=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
-  searchButton.disabled=true;searchButton.querySelector('span').textContent='Searching…';
+  searchButton.disabled=true;searchButton.classList.add('is-loading');searchButton.setAttribute('aria-busy','true');searchButton.setAttribute('aria-label','Searching news');searchButton.querySelector('span').textContent='Searching…';status.classList.add('is-loading');
   exactGroup.classList.add('hidden');relatedGroup.classList.add('hidden');reader.classList.add('hidden');
   exactResults.replaceChildren();relatedResults.replaceChildren();
   status.textContent='Searching news…';
@@ -1092,7 +1122,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    status.textContent='News service is temporarily slow or unavailable. Please try again shortly.';
    console.error('World News search failed:',error);
   }finally{
-   if(requestId===searchSequence){searchButton.disabled=false;searchButton.querySelector('span').textContent='Search News';}
+   if(requestId===searchSequence){searchButton.disabled=false;searchButton.classList.remove('is-loading');searchButton.removeAttribute('aria-busy');searchButton.setAttribute('aria-label','Search news');searchButton.querySelector('span').textContent='Search';status.classList.remove('is-loading');}
   }
  }
  searchButton.addEventListener('click',searchNews);
