@@ -330,6 +330,37 @@ html,body{background:#f7f7f7;color:#242424}
 .searchbox .search-clear.search-clear-icon span{font-size:19px;line-height:1;font-weight:500;transform:translateY(-1px)}
 .searchbox .search-clear.search-clear-icon:hover{opacity:1;transform:scale(1.06)}
 @media(max-width:760px){.searchbox #searchBtn.search-icon-button{width:34px;min-width:34px;height:33px}.searchbox #searchBtn.search-icon-button svg{width:17px;height:17px}.searchbox .search-clear.search-clear-icon{width:24px;min-width:24px;height:24px}}
+
+/* Smooth, accessible category navigation fold/unfold */
+.category-menu{
+ display:block;
+ max-height:0;
+ opacity:0;
+ visibility:hidden;
+ overflow:hidden;
+ transform:translateY(-8px) scale(.985);
+ transform-origin:top center;
+ pointer-events:none;
+ transition:max-height .34s cubic-bezier(.2,.75,.25,1),opacity .22s ease,transform .28s cubic-bezier(.2,.75,.25,1),visibility 0s linear .34s;
+}
+.category-menu.is-open{
+ max-height:min(65vh,520px);
+ opacity:1;
+ visibility:visible;
+ overflow-y:auto;
+ transform:translateY(0) scale(1);
+ pointer-events:auto;
+ transition:max-height .38s cubic-bezier(.2,.75,.25,1),opacity .22s ease,transform .28s cubic-bezier(.2,.75,.25,1),visibility 0s;
+}
+.category-toggle span{
+ display:inline-block;
+ transition:transform .28s cubic-bezier(.2,.75,.25,1);
+}
+.category-toggle.is-open span{transform:rotate(180deg)}
+@media(prefers-reduced-motion:reduce){
+ .category-menu,.category-toggle span{transition:none!important;transform:none!important}
+}
+
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -338,7 +369,7 @@ html,body{background:#f7f7f7;color:#242424}
 <div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
 <header class="top"><div class="wrap nav"><div class="brand"><button class="mark" id="skAdminButton" type="button" aria-label="Admin Login" title="Admin Login" onclick="openAuthModal()">SK</button><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
  <button class="category-toggle" id="categoryToggle" type="button" aria-expanded="false" aria-controls="categoryMenu">☰ Browse All Categories <span>▾</span></button>
- <div class="category-menu hidden" id="categoryMenu">
+ <div class="category-menu" id="categoryMenu">
   <a href="#tools" data-search="ai tools artificial intelligence">✦ AI Tools</a>
   <a href="#apps" data-search="apps android mobile applications">▦ Apps</a>
   <a href="#mod-apk" data-search="all apps mod apk modified applications">⚡ All Apps Mod APK</a>
@@ -486,13 +517,13 @@ const input=document.getElementById('search'), categoryLinks=[...document.queryS
 const categoryToggle=document.getElementById('categoryToggle'), categoryMenu=document.getElementById('categoryMenu');
 const categoryDropdown=document.querySelector('.category-dropdown');
 let categoryCloseTimer=null;
-function closeCategoryMenu(){categoryMenu.classList.add('hidden');categoryToggle.setAttribute('aria-expanded','false');if(categoryCloseTimer!==null){clearTimeout(categoryCloseTimer);categoryCloseTimer=null;}}
+function closeCategoryMenu(){categoryMenu.classList.remove('is-open');categoryToggle.classList.remove('is-open');categoryToggle.setAttribute('aria-expanded','false');if(categoryCloseTimer!==null){clearTimeout(categoryCloseTimer);categoryCloseTimer=null;}}
 function startCategoryCloseTimer(){if(categoryCloseTimer!==null)clearTimeout(categoryCloseTimer);categoryCloseTimer=setTimeout(closeCategoryMenu,3000);}
 /* Close after 3 seconds without interaction; outside taps close it immediately. */
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!categoryMenu.classList.contains('hidden')){closeCategoryMenu();categoryToggle.focus();}});
-document.addEventListener('click',e=>{if(!e.target.closest('.category-dropdown')&&!categoryMenu.classList.contains('hidden'))closeCategoryMenu();});
-categoryDropdown.addEventListener('pointerdown',()=>{if(!categoryMenu.classList.contains('hidden'))startCategoryCloseTimer();});
-categoryToggle.addEventListener('click',()=>{const opening=categoryMenu.classList.contains('hidden');if(opening){categoryMenu.classList.remove('hidden');categoryToggle.setAttribute('aria-expanded','true');startCategoryCloseTimer();}else closeCategoryMenu();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&categoryToggle.getAttribute('aria-expanded')==='true'){closeCategoryMenu();categoryToggle.focus();}});
+document.addEventListener('click',e=>{if(!e.target.closest('.category-dropdown')&&categoryToggle.getAttribute('aria-expanded')==='true')closeCategoryMenu();});
+categoryDropdown.addEventListener('pointerdown',()=>{if(categoryToggle.getAttribute('aria-expanded')==='true')startCategoryCloseTimer();});
+categoryToggle.addEventListener('click',()=>{const opening=categoryToggle.getAttribute('aria-expanded')!=='true';if(opening){categoryMenu.classList.add('is-open');categoryToggle.classList.add('is-open');categoryToggle.setAttribute('aria-expanded','true');startCategoryCloseTimer();}else closeCategoryMenu();});
 categoryMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeCategoryMenu));
 /* Instant search: results update on every keystroke */
 const searchFeedback=document.createElement('div');searchFeedback.className='search-feedback hidden';searchFeedback.setAttribute('aria-live','polite');document.querySelector('.category-dock .dock-inner').appendChild(searchFeedback);
