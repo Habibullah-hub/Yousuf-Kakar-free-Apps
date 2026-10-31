@@ -1130,7 +1130,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  async function searchNews(){
   const spokenOrTyped=queryInput.value.trim();
   if(!spokenOrTyped){status.textContent='Please type a topic or use the microphone to speak.';queryInput.focus();return;}
-  const requestId=++searchSequence;
+  const requestId=++searchSequence;++languageRenderSequence;
   let targetLanguage=newsLanguageSelect.value||'en';
   let languageName=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
   searchButton.disabled=true;searchButton.classList.add('is-loading');searchButton.setAttribute('aria-busy','true');searchButton.setAttribute('aria-label','Searching news');searchButton.querySelector('span').textContent='Searching…';status.classList.add('is-loading');
