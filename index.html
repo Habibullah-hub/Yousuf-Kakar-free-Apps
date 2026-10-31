@@ -308,7 +308,7 @@ html,body{background:#f7f7f7;color:#242424}
 </head>
 <body>
 <div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
-<header class="top"><div class="wrap nav"><a class="brand" href="#"><span class="mark">SK</span><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></a><nav class="links"><a href="#apps">Android Apps</a><a href="#software">Software</a><a href="#tools">AI Tools</a><a href="#about">About</a><a href="#add-resource">Add Resource</a></nav><button class="secondary mobile-menu-toggle" type="button" onclick="toggleMobileMenu()" aria-label="Open menu">☰</button><div id="authNavContainer"><button class="secondary" type="button" onclick="openAuthModal()">Admin Login</button></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div id="mobileMenu" class="mobile-menu hidden"><a href="#apps">Apps</a><a href="#mod-apk">Mod APK</a><a href="#software">Software</a><a href="#tools">AI Tools</a><a href="#documents">Documents</a><a href="#games">Games</a><a href="#news">News</a><button type="button" onclick="openAuthModal()">Admin Login</button></div></header>
+<header class="top"><div class="wrap nav"><a class="brand" href="#"><span class="mark">SK</span><span>SK CYBER HUB<small>SAAD YOUSUF KAKAR</small></span></a><nav class="links"><a href="#apps">Android Apps</a><a href="#software">Software</a><a href="#tools">AI Tools</a><a href="#about">About</a><a href="#add-resource">Add Resource</a></nav><button class="secondary mobile-menu-toggle" type="button" onclick="toggleMobileMenu()" aria-label="Open menu">☰</button><div id="authNavContainer"><button class="secondary" type="button" onclick="openAuthModal()">Admin Login</button></div><a class="primary" href="#apps">Explore Apps ↗</a></div><div id="mobileMenu" class="mobile-menu hidden"><a href="#apps">Apps</a><a href="#mod-apk">Mod APK</a><a href="#software">Software</a><a href="#tools">AI Tools</a><a href="#documents">Documents</a><a href="#games">Games</a><a href="#news">News</a><button id="mobileAuthAction" type="button" onclick="openAuthModal()">Admin Login</button></div></header>
 <div class="category-dock"><div class="wrap dock-inner"><div class="category-dropdown">
  <button class="category-toggle" id="categoryToggle" type="button" aria-expanded="false" aria-controls="categoryMenu">☰ Browse All Categories <span>▾</span></button>
  <div class="category-menu hidden" id="categoryMenu">
@@ -588,24 +588,46 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         async function checkSession() {
             if (!supabaseClient) return;
             const { data: { session } } = await supabaseClient.auth.getSession();
-            currentUser = session?.user || null;
+            if (!session?.user) {
+                currentUser = null;
+                updateAuthUI();
+                return;
+            }
+            const { data: profile, error } = await supabaseClient
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .maybeSingle();
+            currentUser = !error && profile?.role === 'admin' ? session.user : null;
             updateAuthUI();
         }
 
         function updateAuthUI() {
             const container = document.getElementById('authNavContainer');
+            const mobileAction = document.getElementById('mobileAuthAction');
             if (currentUser) {
                 container.innerHTML = `
                     <button onclick="switchTab('admin')" class="px-3 py-1.5 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 font-bold text-xs">
                         Dashboard
                     </button>
                 `;
+                if (mobileAction) {
+                    mobileAction.textContent = 'Dashboard';
+                    mobileAction.onclick = () => {
+                        document.getElementById('mobileMenu').classList.add('hidden');
+                        switchTab('admin');
+                    };
+                }
             } else {
                 container.innerHTML = `
                     <button onclick="openAuthModal()" class="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-emerald-500/20">
                         <i class="fa-solid fa-lock text-xs"></i>
                     </button>
                 `;
+                if (mobileAction) {
+                    mobileAction.textContent = 'Admin Login';
+                    mobileAction.onclick = openAuthModal;
+                }
             }
         }
 
@@ -725,12 +747,37 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         async function handleAdminLogin(e) {
             e.preventDefault();
             if (!supabaseClient) return alert('Supabase error');
-            const { error } = await supabaseClient.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: document.getElementById('adminEmail').value,
                 password: document.getElementById('adminPass').value
             });
-            if (error) alert(error.message);
-            else location.reload();
+            if (error) {
+                alert(error.message);
+                return;
+            }
+            const user = data?.user;
+            if (!user) {
+                alert('Login session could not be confirmed. Please try again.');
+                return;
+            }
+            const { data: profile, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (profileError || profile?.role !== 'admin') {
+                await supabaseClient.auth.signOut();
+                currentUser = null;
+                updateAuthUI();
+                alert('This account does not have administrator permission.');
+                return;
+            }
+            currentUser = user;
+            document.getElementById('adminPass').value = '';
+            closeAuthModal();
+            updateAuthUI();
+            switchTab('admin');
+            fetchApps();
         }
 
         async function logoutAdmin() {
