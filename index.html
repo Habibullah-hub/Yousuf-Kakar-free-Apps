@@ -633,7 +633,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  const newsLanguageSelect=document.getElementById('newsLanguageSelect');
  const applyNewsLanguage=document.getElementById('applyNewsLanguage');
  let searchSequence=0;
- const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\\s+/g,' ').trim();
+ const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();
  const makeFeedUrl=q=>{const lang=newsLanguageSelect.value||'en';return 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl='+encodeURIComponent(lang)+'&gl=US&ceid=US:'+encodeURIComponent(lang);};
  async function fetchFeed(q){
   const rss=makeFeedUrl(q);
@@ -670,7 +670,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   status.textContent='Searching for “'+q+'” in '+(newsSearch.value||'English')+'…';
   try{
    const feeds=await Promise.all([fetchFeed(q),fetchFeed(q+' Pakistan')]);if(requestId!==searchSequence)return;
-   const seen=new Set(),exact=[],related=[],terms=q.toLocaleLowerCase().split(/\\s+/).filter(Boolean);
+   const seen=new Set(),exact=[],related=[],terms=q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
    feeds.flat().forEach(item=>{const title=cleanText(item.title).toLocaleLowerCase(),desc=cleanText(item.description||item.content||'').toLocaleLowerCase(),key=cleanText(item.title)+'|'+(item.pubDate||'');if(!title||seen.has(key))return;seen.add(key);const phrase=title.includes(q.toLocaleLowerCase()),hits=terms.filter(t=>title.includes(t)||desc.includes(t)).length;if(phrase||hits===terms.length)exact.push(item);else if(hits>0)related.push(item);});
    exact.slice(0,12).forEach(item=>exactResults.appendChild(makeCard(item)));
    related.slice(0,18).forEach(item=>relatedResults.appendChild(makeCard(item)));
