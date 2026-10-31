@@ -974,7 +974,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  try{newsLanguageSelect.value=sessionStorage.getItem('skcyberhub_news_language_session')||'en';}catch(e){}
  newsLanguageInput.value=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
  newsLanguageSelect.addEventListener('change',()=>{newsLanguageInput.value=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';try{sessionStorage.setItem('skcyberhub_news_language_session',newsLanguageSelect.value);}catch(e){}});
- let searchSequence=0;
+ let searchSequence=0,languageRenderSequence=0,activeNewsExact=[],activeNewsRelated=[];
  const feedCache=new Map(),translationCache=new Map();
  const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();
  const makeFeedUrl=q=>'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en&gl=US&ceid=US:en';
@@ -1077,6 +1077,25 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    catch(error){return {...item,translatedTitle:originalTitle,translatedDescription:originalDescription,translationFailed:true};}
   }));
  }
+ window.addEventListener('skcyberhub-news-language-change',async event=>{
+  const target=event.detail?.code||newsLanguageSelect.value||'en';
+  newsLanguageSelect.value=target;
+  if(!activeNewsExact.length&&!activeNewsRelated.length)return;
+  const renderId=++languageRenderSequence;
+  const name=event.detail?.name||newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||target;
+  status.classList.add('is-loading');status.textContent='Translating news into '+name+'…';
+  try{
+   const translated=await Promise.all([translateItems(activeNewsExact,target),translateItems(activeNewsRelated,target)]);
+   if(renderId!==languageRenderSequence)return;
+   exactResults.replaceChildren(...translated[0].map(makeCard));
+   relatedResults.replaceChildren(...translated[1].map(makeCard));
+   status.textContent='News is now shown in '+name+'.';
+  }catch(error){
+   if(renderId===languageRenderSequence)status.textContent='Some news could not be translated. Please try again.';
+  }finally{
+   if(renderId===languageRenderSequence)status.classList.remove('is-loading');
+  }
+ });
  function getNewsTone(item){
   const text=(cleanText(item.title)+' '+cleanText(item.description||item.content||'')+' '+cleanText(item.author||'')).toLowerCase();
   if(/\b(jang|daily jang|jang news)\b/.test(text))return 'publisher';
@@ -1111,8 +1130,9 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  async function searchNews(){
   const spokenOrTyped=queryInput.value.trim();
   if(!spokenOrTyped){status.textContent='Please type a topic or use the microphone to speak.';queryInput.focus();return;}
-  const requestId=++searchSequence,targetLanguage=newsLanguageSelect.value||'en';
-  const languageName=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
+  const requestId=++searchSequence;
+  let targetLanguage=newsLanguageSelect.value||'en';
+  let languageName=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
   searchButton.disabled=true;searchButton.classList.add('is-loading');searchButton.setAttribute('aria-busy','true');searchButton.setAttribute('aria-label','Searching news');searchButton.querySelector('span').textContent='Searching…';status.classList.add('is-loading');
   exactGroup.classList.add('hidden');relatedGroup.classList.add('hidden');reader.classList.add('hidden');
   exactResults.replaceChildren();relatedResults.replaceChildren();
@@ -1124,16 +1144,18 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    const feed=await fetchFeed(q);if(requestId!==searchSequence)return;
    const seen=new Set(),exact=[],related=[],terms=q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
    feed.forEach(item=>{const title=cleanText(item.title).toLocaleLowerCase(),desc=cleanText(item.description||item.content||'').toLocaleLowerCase(),key=cleanText(item.title)+'|'+(item.pubDate||'');if(!title||seen.has(key))return;seen.add(key);const phrase=title.includes(q.toLocaleLowerCase()),hits=terms.filter(t=>title.includes(t)||desc.includes(t)).length;if(phrase||hits===terms.length)exact.push(item);else if(hits>0)related.push(item);});
-   const exactTop=exact.slice(0,6),relatedTop=related.slice(0,6);
+   const exactTop=exact.slice(0,6),relatedTop=related.slice(0,6);activeNewsExact=exactTop;activeNewsRelated=relatedTop;
    exactTop.forEach(item=>exactResults.appendChild(makeCard(item)));
    relatedTop.forEach(item=>relatedResults.appendChild(makeCard(item)));
    document.getElementById('newsExactCount').textContent=exact.length;
    document.getElementById('newsRelatedCount').textContent=related.length;
    exactGroup.classList.toggle('hidden',exact.length===0);relatedGroup.classList.toggle('hidden',related.length===0);
+   targetLanguage=newsLanguageSelect.value||'en';languageName=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
    status.textContent=(exact.length+related.length)?'Headlines loaded. Translating into '+languageName+'…':'No stories found. Try a shorter or different keyword.';
    if(targetLanguage!=='en'){
+    const translationPass=++languageRenderSequence;
     const translated=await Promise.all([translateItems(exactTop,targetLanguage),translateItems(relatedTop,targetLanguage)]);
-    if(requestId!==searchSequence)return;
+    if(requestId!==searchSequence||translationPass!==languageRenderSequence)return;
     exactResults.replaceChildren(...translated[0].map(makeCard));relatedResults.replaceChildren(...translated[1].map(makeCard));
    }
    if(requestId!==searchSequence)return;
