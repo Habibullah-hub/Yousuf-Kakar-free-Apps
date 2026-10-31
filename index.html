@@ -882,9 +882,9 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   const typed=cleanText(queryInput.value);
   const headline=cleanText(item.title);
   let subject=typed||headline;
-  if(/\\btrump\\b/i.test(subject))subject='Donald Trump';
-  else if(/\\bimran\\s+khan\\b/i.test(subject))subject='Imran Khan';
-  const candidates=[subject+' portrait',subject,headline.split(/\\s+/).slice(0,6).join(' ')].filter(Boolean);
+  if(/\btrump\b/i.test(subject))subject='Donald Trump';
+  else if(/\bimran\s+khan\b/i.test(subject))subject='Imran Khan';
+  const candidates=[subject+' portrait',subject,headline.split(/\s+/).slice(0,6).join(' ')].filter(Boolean);
   const unique=[...new Set(candidates.map(x=>x.trim()).filter(Boolean))];
   const key=(subject+'|'+headline).toLowerCase();
   if(photoCache.has(key))return photoCache.get(key);
