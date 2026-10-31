@@ -673,7 +673,7 @@ document.getElementById('clearResource').addEventListener('click',()=>{
                         <button onclick="alert('${app.name}\\nVersion: ${app.version}\\nPlatform: ${app.platform}')" class="flex-1 py-2 rounded-xl bg-[#021812] border border-emerald-950 text-slate-300 font-semibold text-xs text-center">
                             <i class="fa-solid fa-circle-info text-[10px] mr-1"></i> Details
                         </button>
-                        <a href="${app.download_url}" target="_blank" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20">
+                        <a href="${app.download_url}" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20" rel="noopener noreferrer">
                             <i class="fa-solid fa-download text-[10px]"></i>
                             <span>Get</span>
                         </a>
