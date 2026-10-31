@@ -634,61 +634,73 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         async function fetchApps() {
             if (!supabaseClient) return;
             const { data, error } = await supabaseClient.from('apps').select('*').order('created_at', { ascending: false });
-            if (!error && data && data.length) {
-                appsList = data;
+            if (error) {
+                console.error('Could not load apps from Supabase:', error);
+                renderApps();
+                return;
             }
+            appsList = data || [];
             renderApps();
         }
 
         function renderApps() {
             const grid = document.getElementById('appsGrid');
+            const modGrid = document.getElementById('modApkResources');
             const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
-
-            const filtered = appsList.filter(app => {
+            const visibleApps = appsList.filter(app => currentUser || !supabaseClient || app.published === true);
+            const filtered = visibleApps.filter(app => {
                 const matchCat = currentCat === 'All' || app.category === currentCat;
-                const matchSearch = app.name.toLowerCase().includes(search) || app.description.toLowerCase().includes(search);
+                const matchSearch = (app.name || '').toLowerCase().includes(search) || (app.description || '').toLowerCase().includes(search);
                 return matchCat && matchSearch;
             });
 
-            document.getElementById('statAppCount').innerText = appsList.length;
+            document.getElementById('statAppCount').innerText = visibleApps.length;
             document.getElementById('appBadgeCount').innerText = filtered.length;
 
-            grid.innerHTML = filtered.map(app => `
+            const makeAppCard = app => `
                 <div class="bg-[#01120d] border border-emerald-950 rounded-2xl p-4 space-y-3 hover:border-emerald-800/60 transition">
                     <div class="flex items-start justify-between">
                         <div class="flex items-center space-x-3">
-                            <img src="${app.icon_url}" class="w-12 h-12 rounded-xl object-cover border border-emerald-900/60" onerror="this.src='https://via.placeholder.com/60'">
+                            <img src="${app.icon_url || ''}" class="w-12 h-12 rounded-xl object-cover border border-emerald-900/60" onerror="this.src='https://via.placeholder.com/60'">
                             <div>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">${app.category}</span>
-                                    ${app.featured ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold"><i class="fa-solid fa-star text-[8px]"></i> FEATURED</span>' : ''}
+                                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">${app.category || 'App'}</span>
+                                    ${app.featured ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">FEATURED</span>' : ''}
                                 </div>
-                                <h3 class="font-bold text-white text-sm">${app.name}</h3>
-                                <span class="text-[11px] text-slate-400">${app.platform} &bull; ${app.version}</span>
+                                <h3 class="font-bold text-white text-sm">${app.name || 'Unnamed app'}</h3>
+                                <span class="text-[11px] text-slate-400">${app.platform || 'Android'} &bull; ${app.version || ''}</span>
                             </div>
                         </div>
                     </div>
-                    <p class="text-xs text-slate-400 leading-relaxed">${app.description}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed">${app.description || ''}</p>
                     <div class="flex items-center space-x-2 pt-1">
-                        <button onclick="alert('${app.name}\\nVersion: ${app.version}\\nPlatform: ${app.platform}')" class="flex-1 py-2 rounded-xl bg-[#021812] border border-emerald-950 text-slate-300 font-semibold text-xs text-center">
+                        <button onclick="alert('App details: ${String(app.name || '').replace(/'/g, '')}')" class="flex-1 py-2 rounded-xl bg-[#021812] border border-emerald-950 text-slate-300 font-semibold text-xs text-center">
                             <i class="fa-solid fa-circle-info text-[10px] mr-1"></i> Details
                         </button>
-                        <a href="${app.download_url}" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20" rel="noopener noreferrer">
+                        <a href="${app.download_url || '#'}" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20" rel="noopener noreferrer">
                             <i class="fa-solid fa-download text-[10px]"></i>
                             <span>Get</span>
                         </a>
                     </div>
                 </div>
-            `).join('');
+            `;
 
-            // Admin Table
+            grid.innerHTML = filtered.map(makeAppCard).join('');
+
+            if (modGrid) {
+                const modApps = visibleApps.filter(app => app.category === 'All Apps Mod APK');
+                modGrid.innerHTML = modApps.length
+                    ? modApps.map(makeAppCard).join('')
+                    : '<p class="empty">ابھی کوئی پبلش شدہ Mod APK موجود نہیں۔ ایڈمن ڈیش بورڈ سے ایپ شامل کریں۔</p>';
+            }
+
             const tbody = document.getElementById('adminTableBody');
             if (tbody) {
                 tbody.innerHTML = appsList.map(app => `
                     <tr class="hover:bg-emerald-950/30">
-                        <td class="p-3 font-semibold text-white">${app.name}</td>
-                        <td class="p-3 text-emerald-400">${app.category}</td>
-                        <td class="p-3 text-slate-400">${app.platform}</td>
+                        <td class="p-3 font-semibold text-white">${app.name || ''}</td>
+                        <td class="p-3 text-emerald-400">${app.category || ''}</td>
+                        <td class="p-3 text-slate-400">${app.platform || ''}</td>
                         <td class="p-3 text-right space-x-1">
                             <button onclick="editApp('${app.id}')" class="px-2 py-1 bg-emerald-950 text-emerald-400 rounded">Edit</button>
                             <button onclick="deleteApp('${app.id}')" class="px-2 py-1 bg-red-950 text-red-400 rounded">Del</button>
@@ -797,7 +809,8 @@ document.getElementById('clearResource').addEventListener('click',()=>{
                 icon_url: document.getElementById('appIcon').value,
                 download_url: document.getElementById('appLink').value,
                 description: document.getElementById('appDesc').value,
-                featured: document.getElementById('appFeatured').checked
+                featured: document.getElementById('appFeatured').checked,
+                published: true
             };
             const res = id ? await supabaseClient.from('apps').update(data).eq('id', id) : await supabaseClient.from('apps').insert([data]);
             if (res.error) alert(res.error.message);
