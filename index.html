@@ -484,9 +484,30 @@ body{top:0!important}
  .resource.tile{grid-template-columns:42px minmax(0,1fr);column-gap:9px;padding:10px}
  .resource .app-icon{width:40px;height:40px}
 }
+
+/* Global growth + bulk importer */
+.bulk-panel{margin:18px 0;padding:20px;border:1px solid #d9e5ed;border-radius:8px;background:linear-gradient(145deg,#fff,#f7fbfe)}
+.bulk-panel h3{margin:0 0 5px;color:#18364c;font-size:18px}.bulk-panel p{margin:5px 0;color:#526575;font-size:12px}
+.bulk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+.bulk-grid .wide{grid-column:1/-1}
+.bulk-panel label{display:block;margin-bottom:6px;color:#34495a;font-size:12px;font-weight:700}
+.bulk-panel textarea,.bulk-panel input,.bulk-panel select{width:100%;padding:11px;border:1px solid #cbd7df;border-radius:5px;background:#fff;color:#1f2933;font:inherit;font-size:13px}
+.bulk-panel textarea{min-height:125px;resize:vertical;line-height:1.55}
+.bulk-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.bulk-preview{max-height:300px;overflow:auto;margin-top:12px;border:1px solid #e1e7ec;border-radius:5px;background:#fff}
+.bulk-preview table{width:100%;border-collapse:collapse;font-size:11px}.bulk-preview th,.bulk-preview td{padding:8px;border-bottom:1px solid #edf0f2;text-align:left;vertical-align:top}.bulk-preview th{position:sticky;top:0;background:#f3f7fa;color:#34495a}
+.bulk-status{margin-top:10px;padding:10px 12px;border:1px solid #c8dff0;border-radius:4px;background:#f2f8fc;color:#244b66;font-size:12px}
+.bulk-hint{font-size:11px!important;color:#657785!important}
+@media(max-width:760px){.bulk-panel{padding:13px}.bulk-grid{grid-template-columns:1fr}.bulk-grid .wide{grid-column:auto}.bulk-actions button{flex:1}}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link rel="canonical" href="https://habibullah-hub.github.io/Yousuf-Kakar-free-Apps/">
+<meta property="og:url" content="https://habibullah-hub.github.io/Yousuf-Kakar-free-Apps/">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"SK Cyber Hub","alternateName":"Yousuf Kakar Free Apps","url":"https://habibullah-hub.github.io/Yousuf-Kakar-free-Apps/","description":"Discover useful apps, AI tools, software, games, learning resources and world news."}</script>
 </head>
 <body>
 <div id="google_translate_element" aria-hidden="true"></div><div id="configAlert" class="config-alert"><span>Supabase is not configured. Configure the existing database to manage saved listings.</span><button type="button" onclick="openSupabaseModal()">Configure</button></div>
@@ -552,7 +573,26 @@ body{top:0!important}
  <div id="newsReader" class="news-reader hidden" role="dialog" aria-modal="true" aria-labelledby="newsReaderTitle"><div class="news-reader-top"><span class="news-reader-label">SK CYBER HUB · NEWS READER</span><div class="news-reader-actions"><button id="shareNewsButton" class="news-share-button" type="button">Share news ↗</button><button id="closeNewsReader" type="button" aria-label="Close news reader" title="Close">×</button></div></div><img id="newsReaderImage" class="news-reader-image hidden" alt="News photo"><h3 id="newsReaderTitle"></h3><div id="newsReaderMeta" class="news-reader-meta"></div><div id="newsReaderBody" class="news-reader-body"></div><p class="news-reader-note">This is the headline and summary supplied by the news feed. The original publisher owns the full article.</p></div>
 </section><section class="wrap" id="about"><div class="notice"><b>Our promise:</b> We aim to prioritize free and legitimate resources. External download links and advertisements will be clearly labelled. We will respect software licenses and copyright, and will not disguise download destinations. Any future ad-supported waiting step will be disclosed before the user continues.</div></section>
 </main>
-<section id="tab-admin" class="section wrap hidden"><div class="section-head"><div><h2>Admin Dashboard</h2><p>Manage listings saved in your connected database.</p></div><div><button class="primary" type="button" onclick="openAppModal()">+ Add App</button> <button class="secondary" type="button" onclick="logoutAdmin()">Log out</button></div></div><div class="manager"><div class="table-wrap"><table class="admin-table"><thead><tr><th>App</th><th>Category</th><th>Platform</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table></div></div>
+<section id="tab-admin" class="section wrap hidden">
+<div class="bulk-panel" id="bulkAppImporter">
+ <h3>Bulk App Import · Add many apps together</h3>
+ <p>Paste many links or upload a CSV / Excel file. Review the preview, then import all approved rows in batches.</p>
+ <div class="bulk-grid">
+  <div class="wide"><label for="bulkLinks">Quick paste — one app per line</label><textarea id="bulkLinks" placeholder="App Name | Category | Platform | Version | Icon URL | Download URL | Description&#10;VLC | Apps | Android | Latest | https://example.com/icon.png | https://play.google.com/store/apps/details?id=org.videolan.vlc | Official media player"></textarea><p class="bulk-hint">Agar sirf link hai to har line mein aik link paste kar dein. Naam aur icon ka basic data link se banane ki koshish hogi.</p></div>
+  <div class="wide"><label for="bulkFile">Upload Excel (.xlsx / .xls) or CSV file</label><input id="bulkFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></div>
+  <div><label for="bulkDefaultCategory">Default category for link-only rows</label><select id="bulkDefaultCategory"><option>Apps</option><option>All Apps Mod APK</option><option>AI Tools</option><option>Software</option><option>Documents</option><option>Games</option><option>Tools</option></select></div>
+  <div><label for="bulkDefaultPlatform">Default platform</label><select id="bulkDefaultPlatform"><option>Android</option><option>Windows</option><option>Cross-Platform</option></select></div>
+ </div>
+ <div class="bulk-actions">
+  <button class="primary" id="bulkTemplate" type="button">Download Excel Template ↓</button>
+  <button class="secondary" id="bulkPreviewBtn" type="button">Preview Apps</button>
+  <button class="primary" id="bulkImportBtn" type="button">Import All Approved Apps</button>
+  <button class="secondary" id="bulkClearBtn" type="button">Clear</button>
+ </div>
+ <div id="bulkStatus" class="bulk-status" role="status" aria-live="polite">Ready. Download the template or paste app links to begin.</div>
+ <div id="bulkPreview" class="bulk-preview hidden"></div>
+ <p class="bulk-hint">Required: App Name and a valid http/https download or official listing URL. Only add apps you are authorized to distribute. Import requires an active Admin login and a working Supabase connection.</p>
+</div><div class="section-head"><div><h2>Admin Dashboard</h2><p>Manage listings saved in your connected database.</p></div><div><button class="primary" type="button" onclick="openAppModal()">+ Add App</button> <button class="secondary" type="button" onclick="logoutAdmin()">Log out</button></div></div><div class="manager"><div class="table-wrap"><table class="admin-table"><thead><tr><th>App</th><th>Category</th><th>Platform</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table></div></div>
 <section class="section wrap" id="admin-resource-tools">
  <div class="section-head"><div><h2>Add & Test a Resource</h2><p>Apna app name aur download URL daal kar apne phone par test karein.</p></div></div>
  <div class="manager">
@@ -642,6 +682,96 @@ body{top:0!important}
 
 
 <footer class="wrap footer"><span>© <span id="year"></span> SK Cyber Hub · SAAD YOUSUF KAKAR</span><span>Built to explore. Designed for everyone.</span></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ let rows=[];
+ const safeUrl=v=>{try{const u=new URL(String(v||'').trim());return /^https?:$/.test(u.protocol)?u.href:'';}catch(e){return '';}};
+ const norm=v=>String(v||'').trim().toLowerCase().replace(/[ _-]+/g,'');
+ function normalizeRow(obj){
+  const o={};Object.keys(obj||{}).forEach(k=>o[norm(k)]=obj[k]);
+  const name=String(o.appname||o.name||o.title||'').trim();
+  const category=String(o.category||o.appcategory||$('bulkDefaultCategory').value).trim();
+  const platform=String(o.platform||$('bulkDefaultPlatform').value).trim();
+  const version=String(o.version||'Latest').trim();
+  const download=safeUrl(o.downloadlink||o.downloadurl||o.link||o.url||o.website||'');
+  const host=download?new URL(download).hostname.replace(/^www\./,''):'';
+  const icon=safeUrl(o.iconurl||o.icon||o.image||'')||(host?'https://www.google.com/s2/favicons?domain='+encodeURIComponent(host)+'&sz=128':'');
+  return {name:name||host||'',category:category||'Apps',platform:platform||'Android',version:version||'Latest',icon_url:icon,download_url:download,description:String(o.description||o.details||('Official resource: '+(host||'')).trim()).trim(),featured:String(o.featured||'').toLowerCase()==='true',published:true};
+ }
+ function parseCSV(text){
+  const out=[];let row=[],cell='',quoted=false;
+  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&quoted&&n==='"'){cell+='"';i++;}else if(c==='"'){quoted=!quoted;}else if(c===','&&!quoted){row.push(cell);cell='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&n==='\n')i++;row.push(cell);if(row.some(x=>String(x).trim()))out.push(row);row=[];cell='';}else cell+=c;}
+  row.push(cell);if(row.some(x=>String(x).trim()))out.push(row);
+  if(!out.length)return [];
+  const headers=out.shift().map(x=>String(x).trim());
+  return out.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+ }
+ function fromPaste(text){
+  return text.split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
+   if(line.includes('|')){const p=line.split('|').map(x=>x.trim());return normalizeRow({name:p[0],category:p[1],platform:p[2],version:p[3],icon_url:p[4],download_url:p[5],description:p.slice(6).join('|')});}
+   return normalizeRow({download_url:line});
+  });
+ }
+ function setStatus(msg){$('bulkStatus').textContent=msg;}
+ function renderPreview(){
+  const box=$('bulkPreview');box.classList.remove('hidden');
+  if(!rows.length){box.textContent='No valid rows found. Check the file or pasted links.';return;}
+  const table=document.createElement('table'),thead=document.createElement('thead'),tr=document.createElement('tr');
+  ['App name','Category','Platform','Download link','Check'].forEach(v=>{const th=document.createElement('th');th.textContent=v;tr.appendChild(th);});thead.appendChild(tr);table.appendChild(thead);
+  const body=document.createElement('tbody');
+  rows.forEach((r,i)=>{const tr=document.createElement('tr');[r.name,r.category,r.platform,r.download_url,r.name&&r.download_url?'Ready':'Missing name/link'].forEach(v=>{const td=document.createElement('td');td.textContent=String(v||'');tr.appendChild(td);});body.appendChild(tr);});
+  table.appendChild(body);box.replaceChildren(table);
+  const valid=rows.filter(r=>r.name&&r.download_url);
+  setStatus('Total rows: '+rows.length+' · Valid: '+valid.length+' · Need correction: '+(rows.length-valid.length)+'. Review before importing.');
+ }
+ $('bulkTemplate').addEventListener('click',()=>{
+  const data=[['App Name','Category','Platform','Version','Icon URL','Download Link','Description','Featured'],['VLC','Apps','Android','Latest','https://www.google.com/s2/favicons?domain=videolan.org&sz=128','https://play.google.com/store/apps/details?id=org.videolan.vlc','Official media player','false']];
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Apps');XLSX.writeFile(wb,'SK-Cyber-Hub-App-Upload-Template.xlsx');}
+  else {const csv=data.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='SK-Cyber-Hub-App-Upload-Template.csv';a.click();URL.revokeObjectURL(a.href);}
+ });
+ $('bulkPreviewBtn').addEventListener('click',async()=>{
+  try{
+   const file=$('bulkFile').files[0],paste=$('bulkLinks').value.trim();
+   if(file){
+    const buffer=await file.arrayBuffer();
+    if(/\.xlsx?$/i.test(file.name)&&window.XLSX){const wb=XLSX.read(buffer,{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(sheet,{defval:''}).map(normalizeRow);}
+    else rows=parseCSV(new TextDecoder().decode(buffer)).map(normalizeRow);
+   }else if(paste) rows=fromPaste(paste);
+   else {setStatus('Pehle links paste karein ya CSV/Excel file select karein.');return;}
+   const seen=new Set();rows=rows.filter(r=>{const key=r.download_url;if(!key||seen.has(key))return false;seen.add(key);return true;});
+   renderPreview();
+  }catch(err){setStatus('File read nahi hui: '+(err.message||'Unknown error'));}
+ });
+ $('bulkImportBtn').addEventListener('click',async()=>{
+  const valid=rows.filter(r=>r.name&&r.download_url);
+  if(!valid.length){setStatus('Pehle Preview Apps dabayein aur valid rows check karein.');return;}
+  if(!window.supabaseClient){setStatus('Supabase connection available nahi. Admin login aur database connection check karein.');return;}
+  if(!window.currentUser){setStatus('Import sirf Admin login ke baad ho sakta hai.');return;}
+  if(!confirm(valid.length+' apps database mein add karni hain?'))return;
+  const button=$('bulkImportBtn');button.disabled=true;let done=0,failed=0;const errors=[];
+  try{
+   for(let i=0;i<valid.length;i+=20){
+    const batch=valid.slice(i,i+20);
+    let result=await window.supabaseClient.from('apps').insert(batch);
+    if(result.error&&/platform.*column|column.*platform/i.test(result.error.message)){
+     const withoutPlatform=batch.map(({platform,...rest})=>rest);
+     result=await window.supabaseClient.from('apps').insert(withoutPlatform);
+    }
+    if(result.error){failed+=batch.length;errors.push(result.error.message);}
+    else done+=batch.length;
+    setStatus('Import progress: '+(done+failed)+' / '+valid.length+' · Added: '+done+' · Failed: '+failed);
+   }
+   if(typeof window.fetchApps==='function')await window.fetchApps();
+   setStatus('Complete — Added: '+done+' · Failed: '+failed+(errors.length?' · First error: '+errors[0]:''));
+  }catch(err){setStatus('Import ruk gaya: '+(err.message||'Unknown error'));}
+  finally{button.disabled=false;}
+ });
+ $('bulkClearBtn').addEventListener('click',()=>{$('bulkLinks').value='';$('bulkFile').value='';$('bulkPreview').replaceChildren();$('bulkPreview').classList.add('hidden');rows=[];setStatus('Cleared. Ready for a new batch.');});
+})();
+</script>
 <script>
 const input=document.getElementById('search'), categoryLinks=[...document.querySelectorAll('#categoryMenu a')], empty=document.getElementById('empty');
 const categoryToggle=document.getElementById('categoryToggle'), categoryMenu=document.getElementById('categoryMenu');
