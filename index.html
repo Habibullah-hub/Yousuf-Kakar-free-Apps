@@ -744,6 +744,40 @@ img,iframe,video{max-width:100%}
 .news-section .news-result-card[data-news-tone="general"]{border-color:#8a9aaa!important;border-left-color:#8a9aaa!important}
 .news-section .news-result-card:hover{box-shadow:0 5px 18px #06172c20!important;transform:translateY(-1px)}
 @media(max-width:600px){.news-section .news-language-choices{max-height:220px}}
+
+/* 2026-11-01 News repair: clickable language menu, distinct topic search and visible navigation */
+.news-section .news-language-control .news-language-chevron{
+ pointer-events:auto!important;cursor:pointer!important;z-index:2;width:42px;height:42px;
+ display:grid;place-items:center;border:0!important;border-radius:0!important;
+ background:transparent!important;color:#075b98!important;font-size:18px!important;
+}
+.news-section .news-language-control .news-language-chevron:hover{background:#edf6fc!important}
+.news-section .news-language-row{position:relative;z-index:4}
+.news-section .news-language-choices{z-index:50}
+.news-section .news-search-panel>label[for="newsQuery"]{display:block!important;margin:0 0 8px!important}
+.news-section .news-search-row{display:block!important;width:100%!important}
+.news-section .news-query-control{display:flex!important;width:100%!important;min-width:0!important;overflow:hidden}
+.news-section .news-query-control input#newsQuery{
+ display:block!important;flex:1 1 0!important;width:1%!important;min-width:0!important;
+ height:46px!important;padding:0 12px!important;color:#152d45!important;
+ background:#fff!important;font-size:14px!important;
+}
+.news-section .news-query-control .news-mic-button{pointer-events:auto!important;cursor:pointer!important}
+.news-section .news-query-control #newsSearchButton{pointer-events:auto!important;cursor:pointer!important}
+.news-section .news-hint{margin-top:9px}
+.nav-actions{display:flex!important;visibility:visible!important;align-items:center!important;gap:8px!important}
+.nav-actions .news-nav-link,.nav-actions .language-toggle{display:inline-flex!important;visibility:visible!important;align-items:center!important;justify-content:center!important}
+@media(max-width:600px){
+ .top .nav{display:flex!important;justify-content:space-between!important;gap:6px!important;min-width:0}
+ .nav-actions{flex:none!important;gap:5px!important}
+ .nav-actions .news-nav-link,.nav-actions .language-toggle{min-height:36px!important;padding:7px 8px!important;font-size:10px!important}
+ .news-section .news-search-panel{padding:12px!important}
+ .news-section .news-query-control{min-height:44px!important}
+ .news-section .news-query-control input#newsQuery{height:42px!important;padding:0 8px!important;font-size:12px!important}
+ .news-section .news-query-control .news-mic-button{flex:0 0 38px!important;width:38px!important;min-width:38px!important;height:40px!important;min-height:40px!important}
+ .news-section .news-query-control #newsSearchButton{flex:0 0 auto!important;min-width:76px!important;height:40px!important;min-height:40px!important;padding:0 7px!important;font-size:10px!important}
+}
+
 </style>
 </head>
 <body>
@@ -801,7 +835,7 @@ img,iframe,video{max-width:100%}
  <div class="section-head"><div><h2>World News</h2><p>Search international headlines and read available news summaries here without leaving SK Cyber Hub.</p></div></div>
  <div class="news-search-panel">
   <label for="newsQuery">Search any news topic</label>
-  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Choose or type a language…" autocomplete="off" aria-label="Choose or type news language"><button id="newsLanguageDropdownButton" class="news-language-chevron" type="button" aria-label="Show all news languages" title="Show all languages" aria-expanded="false">▾</button></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><datalist id="newsLanguageOptions"></datalist><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Search news…" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
+  <div class="news-language-row"><label for="newsLanguageSearch">News language</label><div class="news-language-control"><span class="news-language-globe" aria-hidden="true">◎</span><input id="newsLanguageSearch" class="language-one-field" type="text" placeholder="Select a language (e.g. Urdu)" autocomplete="off" aria-label="Select news display language"><button id="newsLanguageDropdownButton" class="news-language-chevron" type="button" aria-label="Show all news languages" title="Show all languages" aria-expanded="false">▾</button></div><div id="newsLanguageChoices" class="language-choice-list news-language-choices hidden" aria-label="News languages"></div><datalist id="newsLanguageOptions"></datalist><select id="newsLanguageSelect" aria-hidden="true" tabindex="-1"><option value="en">English</option></select></div><div class="news-search-row"><div class="news-query-control"><input id="newsQuery" type="search" placeholder="Type a news topic (e.g. Pakistan, cricket, technology)" autocomplete="off" aria-label="Type or speak a news topic"><button id="newsMicButton" class="news-mic-button" type="button" aria-label="Speak your search" title="Speak your search"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2.5" width="6" height="12" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M8.5 21.5h7"></path></svg></button><button id="newsSearchButton" class="news-search-icon-button" type="button" aria-label="Search news" title="Search news"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span>Search</span></button></div></div>
   <p class="news-hint">Exact matches appear first, followed by related stories. Try English search words for the widest coverage.</p>
  </div>
  <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
@@ -1188,15 +1222,6 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    return translated;
   }
  }
-  const textValue=cleanText(value);if(!textValue)return textValue;
-  const cacheKey=source+'|'+target+'|'+textValue;
-  if(translationCache.has(cacheKey))return translationCache.get(cacheKey);
-  const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(source)+'&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(textValue);
-  const response=await Promise.race([fetch(url,{cache:'default'}),timeout(5000)]);if(!response.ok)throw new Error('Translation service unavailable');
-  const data=await response.json();const translated=Array.isArray(data[0])?data[0].map(part=>part[0]||'').join(''):textValue;
-  translationCache.set(cacheKey,translated);if(translationCache.size>150)translationCache.delete(translationCache.keys().next().value);
-  return translated;
- }
  async function translateItems(items,target){
   if(target==='en')return items;
   return Promise.all(items.map(async item=>{
@@ -1517,13 +1542,42 @@ document.getElementById('clearResource').addEventListener('click',()=>{
                 top.className = 'flex items-start justify-between';
                 const identity = document.createElement('div');
                 identity.className = 'flex items-center space-x-3';
-                const icon = document.createElement('img');
-                icon.className = 'w-12 h-12 rounded-xl object-cover border border-emerald-900/60';
-                icon.alt = (app.name || 'App') + ' icon';
-                icon.src = safeHttpUrl(app.icon_url) || 'https://via.placeholder.com/60';
-                icon.addEventListener('error', () => {
-                    icon.src = 'https://via.placeholder.com/60';
-                }, { once: true });
+                const icon = document.createElement('div');
+                icon.className = 'w-12 h-12 rounded-xl border border-emerald-900/60 flex items-center justify-center overflow-hidden bg-sky-50 text-sky-700 font-extrabold text-lg';
+                icon.setAttribute('aria-label', (app.name || 'App') + ' icon');
+                const iconImage = document.createElement('img');
+                iconImage.className = 'w-full h-full rounded-xl object-contain p-1';
+                iconImage.alt = '';
+                const fallbackIcon = () => {
+                    icon.replaceChildren();
+                    icon.textContent = (String(app.name || 'APP').trim().split(/\\s+/).slice(0,2).map(part => part[0] || '').join('').toUpperCase() || 'APP');
+                    icon.style.background = '#eaf4fb';
+                    icon.style.color = '#0067b8';
+                };
+                const suppliedIcon = safeHttpUrl(app.icon_url);
+                let faviconUrl = '';
+                try {
+                    const downloadHost = new URL(safeHttpUrl(app.download_url)).hostname;
+                    if (downloadHost) faviconUrl = 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(downloadHost) + '&sz=128';
+                } catch (_) {}
+                iconImage.addEventListener('error', () => {
+                    if (iconImage.dataset.fallback !== 'used' && faviconUrl && iconImage.src !== faviconUrl) {
+                        iconImage.dataset.fallback = 'used';
+                        iconImage.src = faviconUrl;
+                    } else {
+                        fallbackIcon();
+                    }
+                });
+                if (suppliedIcon) {
+                    iconImage.src = suppliedIcon;
+                    icon.appendChild(iconImage);
+                } else if (faviconUrl) {
+                    iconImage.dataset.fallback = 'used';
+                    iconImage.src = faviconUrl;
+                    icon.appendChild(iconImage);
+                } else {
+                    fallbackIcon();
+                }
 
                 const info = document.createElement('div');
                 const labels = document.createElement('div');
