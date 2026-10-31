@@ -922,8 +922,8 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   // otherwise every result for "Trump" can incorrectly receive the same portrait.
   const articleText=(headline+' '+description).trim();
   let subject=articleText||typed;
-  if(/\\btrump\\b/i.test(subject))subject='Donald Trump '+articleText;
-  else if(/\\bimran\\s+khan\\b/i.test(subject))subject='Imran Khan '+articleText;
+  if(/\btrump\b/i.test(subject))subject='Donald Trump '+articleText;
+  else if(/\bimran\\s+khan\b/i.test(subject))subject='Imran Khan '+articleText;
   const stopWords=new Set(['the','and','for','with','from','that','this','after','before','over','into','about','says','said','will','has','have','his','her','their','amid','what','when','where','how','new','latest','news','report','reports']);
   const articleWords=[...new Set(headline.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2&&!stopWords.has(w)))];
   const queryWords=typed.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2&&!stopWords.has(w));
@@ -992,13 +992,13 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  }
  function getNewsTone(item){
   const text=(cleanText(item.title)+' '+cleanText(item.description||item.content||'')+' '+cleanText(item.author||'')).toLowerCase();
-  if(/\\b(jang|daily jang|jang news)\\b/.test(text))return 'publisher';
-  if(/\\b(election|president|prime minister|parliament|government|politic|trump|imran khan|minister|senate|congress|court|war|military)\\b/.test(text))return 'politics';
-  if(/\\b(stock|market|business|economy|economic|bank|finance|company|trade|oil price|currency)\\b/.test(text))return 'business';
-  if(/\\b(cricket|football|soccer|match|tournament|player|team|sports|league|world cup)\\b/.test(text))return 'sports';
-  if(/\\b(ai|artificial intelligence|technology|tech|software|app|google|apple|microsoft|cyber| smartphone)\\b/.test(text))return 'technology';
-  if(/\\b(movie|film|actor|actress|celebrity|music|singer|entertainment|drama)\\b/.test(text))return 'entertainment';
-  if(/\\b(world|international|global|country|countries|united nations|climate|earthquake|flood)\\b/.test(text))return 'world';
+  if(/\b(jang|daily jang|jang news)\b/.test(text))return 'publisher';
+  if(/\b(election|president|prime minister|parliament|government|politic|trump|imran khan|minister|senate|congress|court|war|military)\b/.test(text))return 'politics';
+  if(/\b(stock|market|business|economy|economic|bank|finance|company|trade|oil price|currency)\b/.test(text))return 'business';
+  if(/\b(cricket|football|soccer|match|tournament|player|team|sports|league|world cup)\b/.test(text))return 'sports';
+  if(/\b(ai|artificial intelligence|technology|tech|software|app|google|apple|microsoft|cyber| smartphone)\b/.test(text))return 'technology';
+  if(/\b(movie|film|actor|actress|celebrity|music|singer|entertainment|drama)\b/.test(text))return 'entertainment';
+  if(/\b(world|international|global|country|countries|united nations|climate|earthquake|flood)\b/.test(text))return 'world';
   return 'general';
  }
  function openReader(item){
