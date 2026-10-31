@@ -323,6 +323,13 @@ html,body{background:#f7f7f7;color:#242424}
  .dock-inner>.searchbox button{font-size:9px;padding:6px}
 }
 
+/* Compact professional search and clear icon controls */
+.searchbox #searchBtn.search-icon-button{width:40px;min-width:40px;height:36px;padding:0!important;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+.searchbox #searchBtn.search-icon-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.searchbox .search-clear.search-clear-icon{width:27px;min-width:27px;height:27px;padding:0!important;margin:auto 2px auto 0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:inherit;border:1px solid currentColor;opacity:.78}
+.searchbox .search-clear.search-clear-icon span{font-size:19px;line-height:1;font-weight:500;transform:translateY(-1px)}
+.searchbox .search-clear.search-clear-icon:hover{opacity:1;transform:scale(1.06)}
+@media(max-width:760px){.searchbox #searchBtn.search-icon-button{width:34px;min-width:34px;height:33px}.searchbox #searchBtn.search-icon-button svg{width:17px;height:17px}.searchbox .search-clear.search-clear-icon{width:24px;min-width:24px;height:24px}}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -340,7 +347,7 @@ html,body{background:#f7f7f7;color:#242424}
   <a href="#games" data-search="games android pc entertainment">◈ Games</a>
   <a href="#news" data-search="news technology updates">⌁ Technology News</a>
  </div>
-</div><div class="searchbox"><input id="search" type="search" placeholder="Search tools, apps, software..." aria-label="Search directory"><button id="searchBtn">Search ↗</button></div></div></div>
+</div><div class="searchbox"><input id="search" type="search" placeholder="Search tools, apps, software..." aria-label="Search directory"><button id="searchBtn" class="search-icon-button" type="button" aria-label="Search" title="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg></button></div></div></div>
 </header>
 
 <p id="empty" class="empty hidden">No matching category found. Try another search.</p>
@@ -489,7 +496,7 @@ categoryToggle.addEventListener('click',()=>{const opening=categoryMenu.classLis
 categoryMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeCategoryMenu));
 /* Instant search: results update on every keystroke */
 const searchFeedback=document.createElement('div');searchFeedback.className='search-feedback hidden';searchFeedback.setAttribute('aria-live','polite');document.querySelector('.category-dock .dock-inner').appendChild(searchFeedback);
-const clearSearch=document.createElement('button');clearSearch.type='button';clearSearch.className='search-clear';clearSearch.textContent='Clear';clearSearch.setAttribute('aria-label','Clear search');document.querySelector('.category-dock .searchbox').appendChild(clearSearch);
+const clearSearch=document.createElement('button');clearSearch.type='button';clearSearch.className='search-clear search-clear-icon';clearSearch.innerHTML='<span aria-hidden="true">×</span>';clearSearch.title='Clear search';clearSearch.setAttribute('aria-label','Clear search');document.querySelector('.category-dock .searchbox').appendChild(clearSearch);
 clearSearch.addEventListener('click',()=>{input.value='';runSearch();input.focus();});
 /* Live section counters show how many listings remain visible */
 document.querySelectorAll('section.section').forEach(section=>{
