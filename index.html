@@ -588,7 +588,17 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         async function checkSession() {
             if (!supabaseClient) return;
             const { data: { session } } = await supabaseClient.auth.getSession();
-            currentUser = session?.user || null;
+            if (!session?.user) {
+                currentUser = null;
+                updateAuthUI();
+                return;
+            }
+            const { data: profile, error } = await supabaseClient
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .maybeSingle();
+            currentUser = !error && profile?.role === 'admin' ? session.user : null;
             updateAuthUI();
         }
 
@@ -745,7 +755,24 @@ document.getElementById('clearResource').addEventListener('click',()=>{
                 alert(error.message);
                 return;
             }
-            currentUser = data?.user || null;
+            const user = data?.user;
+            if (!user) {
+                alert('Login session could not be confirmed. Please try again.');
+                return;
+            }
+            const { data: profile, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (profileError || profile?.role !== 'admin') {
+                await supabaseClient.auth.signOut();
+                currentUser = null;
+                updateAuthUI();
+                alert('This account does not have administrator permission.');
+                return;
+            }
+            currentUser = user;
             document.getElementById('adminPass').value = '';
             closeAuthModal();
             updateAuthUI();
