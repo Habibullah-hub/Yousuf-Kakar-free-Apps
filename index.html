@@ -361,6 +361,36 @@ html,body{background:#f7f7f7;color:#242424}
  .category-menu,.category-toggle span{transition:none!important;transform:none!important}
 }
 
+
+/* In-site World News search and reader */
+.news-search-panel{padding:18px;border:1px solid #d9e3ea;border-radius:7px;background:#fff}
+.news-search-panel label{display:block;margin-bottom:8px;color:#242424;font-size:13px;font-weight:700}
+.news-search-row{display:flex;gap:8px}
+.news-search-row input{flex:1;min-width:0;padding:12px 13px;border:1px solid #c8c8c8;border-radius:4px;background:#fff;color:#242424;outline:0}
+.news-search-row input:focus{border-color:#0067b8;box-shadow:0 0 0 1px #0067b8}
+.news-search-row button{padding:10px 17px;border:1px solid #0067b8;border-radius:4px;background:#0067b8;color:#fff;font-weight:700;cursor:pointer}
+.news-search-row button:disabled{opacity:.6;cursor:wait}
+.news-hint{margin:8px 0 0;color:#616161;font-size:11px}
+.news-status{margin:13px 0;padding:12px 14px;border:1px solid #d9e3ea;border-radius:5px;background:#f8fbfd;color:#425466;font-size:12px}
+.news-result-group{margin-top:22px}
+.news-result-group h3{display:flex;align-items:center;gap:9px;margin:0 0 11px;color:#242424;font-size:17px;font-weight:650}
+.news-result-group h3 span{padding:2px 7px;border-radius:20px;background:#eff7fc;color:#005a9e;font-size:10px}
+.news-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.news-result-card{width:100%;padding:14px;text-align:left;border:1px solid #e1e1e1;border-radius:6px;background:#fff;color:#242424;cursor:pointer;transition:border-color .16s,box-shadow .16s}
+.news-result-card:hover{border-color:#9cc8e6;box-shadow:0 4px 14px #0000000c}
+.news-result-card strong{display:block;margin-bottom:7px;font-size:14px;line-height:1.45}
+.news-result-card p{display:-webkit-box;margin:0 0 9px;overflow:hidden;color:#616161;font-size:11px;line-height:1.5;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.news-result-card small{color:#0067b8;font-size:10px}
+.news-reader{margin-top:20px;padding:20px;border:1px solid #c8dff0;border-radius:7px;background:#f8fbfd;scroll-margin-top:140px}
+.news-reader-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.news-reader-label{color:#005a9e;font-size:10px;font-weight:800;letter-spacing:1px}
+.news-reader-top button{width:34px;height:34px;border:1px solid #c8c8c8;border-radius:50%;background:#fff;color:#242424;font-size:23px;line-height:1;cursor:pointer}
+.news-reader h3{margin:12px 0 7px;color:#242424;font-size:22px;line-height:1.3}
+.news-reader-meta{color:#616161;font-size:11px}
+.news-reader-body{margin-top:15px;color:#343434;font-size:14px;line-height:1.8;white-space:pre-line}
+.news-reader-note{margin:16px 0 0;padding-top:11px;border-top:1px solid #d9e3ea;color:#616161;font-size:10px}
+@media(max-width:600px){.news-search-panel{padding:13px}.news-search-row{gap:6px}.news-search-row input{padding:10px;font-size:12px}.news-search-row button{padding:9px 10px;font-size:11px}.news-results{grid-template-columns:1fr}.news-reader{padding:15px}.news-reader h3{font-size:19px}}
+
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -416,11 +446,18 @@ html,body{background:#f7f7f7;color:#242424}
 <a class="tile resource" data-search="crazygames browser online games" href="https://www.crazygames.com/" target="_blank" rel="noopener noreferrer"><span class="tag">BROWSER GAMES</span><h3>CrazyGames</h3><p>Play browser games; availability and ads depend on the site.</p><span class="arrow">Open website ↗</span></a>
 </div></section>
 
-<section class="section wrap" id="news"><div class="section-head"><div><h2>World News</h2><p>External news sources. Articles belong to their respective publishers.</p></div></div><div class="grid resource-grid">
-<a class="tile resource" data-search="bbc world news international breaking global" href="https://www.bbc.com/news/world" target="_blank" rel="noopener noreferrer"><span class="tag">WORLD NEWS</span><h3>BBC World</h3><p>International headlines and reports from around the world.</p><span class="arrow">Read BBC World ↗</span></a>
-<a class="tile resource" data-search="Reuters world news global politics business" href="https://www.reuters.com/world/" target="_blank" rel="noopener noreferrer"><span class="tag">WORLD NEWS</span><h3>Reuters World</h3><p>Global news, politics, business and major international events.</p><span class="arrow">Read Reuters World ↗</span></a>
-<a class="tile resource" data-search="Al Jazeera international world news Middle East global" href="https://www.aljazeera.com/news/" target="_blank" rel="noopener noreferrer"><span class="tag">WORLD NEWS</span><h3>Al Jazeera</h3><p>International reporting and major stories from across the globe.</p><span class="arrow">Read Al Jazeera ↗</span></a>
-</div></section><section class="wrap" id="about"><div class="notice"><b>Our promise:</b> We aim to prioritize free and legitimate resources. External download links and advertisements will be clearly labelled. We will respect software licenses and copyright, and will not disguise download destinations. Any future ad-supported waiting step will be disclosed before the user continues.</div></section>
+<section class="section wrap" id="news">
+ <div class="section-head"><div><h2>World News</h2><p>Search international headlines and read available news summaries here without leaving SK Cyber Hub.</p></div></div>
+ <div class="news-search-panel">
+  <label for="newsQuery">Search any news topic</label>
+  <div class="news-search-row"><input id="newsQuery" type="search" placeholder="Example: Pakistan, Saudi Arabia, cricket, world..." autocomplete="off"><button id="newsSearchButton" type="button">Search News</button></div>
+  <p class="news-hint">Exact matches appear first, followed by related stories. Try English search words for the widest coverage.</p>
+ </div>
+ <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
+ <div id="newsExactGroup" class="news-result-group hidden"><h3>Exact matches <span id="newsExactCount"></span></h3><div id="newsExactResults" class="news-results"></div></div>
+ <div id="newsRelatedGroup" class="news-result-group hidden"><h3>Related news <span id="newsRelatedCount"></span></h3><div id="newsRelatedResults" class="news-results"></div></div>
+ <div id="newsReader" class="news-reader hidden" role="dialog" aria-modal="true" aria-labelledby="newsReaderTitle"><div class="news-reader-top"><span class="news-reader-label">SK CYBER HUB · NEWS READER</span><button id="closeNewsReader" type="button" aria-label="Close news reader" title="Close">×</button></div><h3 id="newsReaderTitle"></h3><div id="newsReaderMeta" class="news-reader-meta"></div><div id="newsReaderBody" class="news-reader-body"></div><p class="news-reader-note">This is the headline and summary supplied by the news feed. The original publisher owns the full article.</p></div>
+</section><section class="wrap" id="about"><div class="notice"><b>Our promise:</b> We aim to prioritize free and legitimate resources. External download links and advertisements will be clearly labelled. We will respect software licenses and copyright, and will not disguise download destinations. Any future ad-supported waiting step will be disclosed before the user continues.</div></section>
 </main>
 <section id="tab-admin" class="section wrap hidden"><div class="section-head"><div><h2>Admin Dashboard</h2><p>Manage listings saved in your connected database.</p></div><div><button class="primary" type="button" onclick="openAppModal()">+ Add App</button> <button class="secondary" type="button" onclick="logoutAdmin()">Log out</button></div></div><div class="manager"><div class="table-wrap"><table class="admin-table"><thead><tr><th>App</th><th>Category</th><th>Platform</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table></div></div>
 <section class="section wrap" id="admin-resource-tools">
@@ -561,6 +598,92 @@ document.getElementById('searchBtn').addEventListener('click',runSearch);
 input.addEventListener('input',runSearch);
 input.addEventListener('input',()=>{const s=document.getElementById('searchInput');if(s){s.value=input.value;filterApps();}});
 input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runSearch()}});
+
+/* World News: search Google News RSS and keep reading inside this website. */
+(()=>{
+ const queryInput=document.getElementById('newsQuery');
+ const searchButton=document.getElementById('newsSearchButton');
+ const status=document.getElementById('newsStatus');
+ const exactGroup=document.getElementById('newsExactGroup');
+ const relatedGroup=document.getElementById('newsRelatedGroup');
+ const exactResults=document.getElementById('newsExactResults');
+ const relatedResults=document.getElementById('newsRelatedResults');
+ const reader=document.getElementById('newsReader');
+ let searchSequence=0;
+ const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();
+ const makeFeedUrl=q=>'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=en-US&gl=US&ceid=US:en';
+ async function fetchFeed(q){
+  const endpoint='https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(makeFeedUrl(q));
+  const response=await fetch(endpoint,{cache:'no-store'});
+  if(!response.ok)throw new Error('News service response: '+response.status);
+  const data=await response.json();
+  if(data.status!=='ok'||!Array.isArray(data.items))throw new Error(data.message||'News feed unavailable');
+  return data.items;
+ }
+ function makeCard(item){
+  const button=document.createElement('button');button.type='button';button.className='news-result-card';
+  const title=document.createElement('strong');title.textContent=cleanText(item.title)||'Untitled news';
+  const description=document.createElement('p');description.textContent=cleanText(item.description||item.content||'News summary is not available in this feed.');
+  const meta=document.createElement('small');meta.textContent=(cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'Latest update');
+  button.append(title,description,meta);
+  button.addEventListener('click',()=>openReader(item));
+  return button;
+ }
+ function openReader(item){
+  document.getElementById('newsReaderTitle').textContent=cleanText(item.title)||'News';
+  document.getElementById('newsReaderMeta').textContent=(cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'');
+  const body=document.getElementById('newsReaderBody');
+  body.textContent=cleanText(item.description||item.content||'The publisher has not supplied a readable summary in this feed.');
+  reader.classList.remove('hidden');
+  reader.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ function closeReader(){reader.classList.add('hidden');}
+ document.getElementById('closeNewsReader').addEventListener('click',closeReader);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!reader.classList.contains('hidden'))closeReader();});
+ async function searchNews(){
+  const q=queryInput.value.trim();
+  if(!q){status.textContent='Please enter a topic or keyword to search news.';queryInput.focus();return;}
+  const requestId=++searchSequence;
+  searchButton.disabled=true;searchButton.textContent='Searching…';
+  exactGroup.classList.add('hidden');relatedGroup.classList.add('hidden');reader.classList.add('hidden');
+  exactResults.replaceChildren();relatedResults.replaceChildren();
+  status.textContent='Searching exact headlines and related world news…';
+  try{
+   const [exactFeed,relatedFeed]=await Promise.all([
+    fetchFeed('"'+q+'"'),
+    fetchFeed(q)
+   ]);
+   if(requestId!==searchSequence)return;
+   const seen=new Set();
+   const exact=[],related=[];
+   const terms=q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
+   exactFeed.concat(relatedFeed).forEach(item=>{
+    const title=cleanText(item.title).toLocaleLowerCase();
+    const key=cleanText(item.title)+'|'+(item.pubDate||'');
+    if(seen.has(key))return;seen.add(key);
+    const phrase=title.includes(q.toLocaleLowerCase());
+    const allTerms=terms.every(term=>title.includes(term));
+    if(phrase||allTerms)exact.push(item);else related.push(item);
+   });
+   exact.slice(0,12).forEach(item=>exactResults.appendChild(makeCard(item)));
+   related.slice(0,18).forEach(item=>relatedResults.appendChild(makeCard(item)));
+   document.getElementById('newsExactCount').textContent=exact.length;
+   document.getElementById('newsRelatedCount').textContent=related.length;
+   exactGroup.classList.toggle('hidden',exact.length===0);
+   relatedGroup.classList.toggle('hidden',related.length===0);
+   status.textContent=(exact.length+related.length)?(exact.length+' exact and '+related.length+' related stories found. Select any headline to read its available summary here.'):'No stories found for this search. Try a shorter or different keyword.';
+  }catch(error){
+   if(requestId!==searchSequence)return;
+   status.textContent='News could not be loaded right now. Please try again in a moment. The live news feed may be temporarily unavailable.';
+   console.error('World News search failed:',error);
+  }finally{
+   if(requestId===searchSequence){searchButton.disabled=false;searchButton.textContent='Search News';}
+  }
+ }
+ searchButton.addEventListener('click',searchNews);
+ queryInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchNews();}});
+})();
+
 document.getElementById('year').textContent=new Date().getFullYear();
 /* Section counts and scroll-aware navigation */
 runSearch();
