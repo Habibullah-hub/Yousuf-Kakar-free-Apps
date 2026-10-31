@@ -736,7 +736,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   button.append(title,description,meta);button.addEventListener('click',()=>openReader(item));return button;
  }
  async function translateText(value,target,source='auto'){
-  const textValue=cleanText(value);if(!textValue||target==='en'&&source==='auto')return textValue;
+  const textValue=cleanText(value);if(!textValue)return textValue;
   const cacheKey=source+'|'+target+'|'+textValue;
   if(translationCache.has(cacheKey))return translationCache.get(cacheKey);
   const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+encodeURIComponent(source)+'&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(textValue);
