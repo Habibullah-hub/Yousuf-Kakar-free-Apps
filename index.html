@@ -452,12 +452,13 @@ body{top:0!important}
 .news-result-card{width:100%;padding:14px;text-align:left;border:1px solid #e1e1e1;border-radius:6px;background:#fff;color:#242424;cursor:pointer;transition:border-color .16s,box-shadow .16s}
 .news-result-card:hover{border-color:#9cc8e6;box-shadow:0 4px 14px #0000000c}
 .news-result-card strong{display:block;margin-bottom:7px;font-size:14px;line-height:1.45}
+.news-card-image{display:block;width:calc(100% + 28px);height:168px;margin:-14px -14px 12px;object-fit:cover;background:#eaf1f6;border-radius:6px 6px 0 0}.news-card-image-fallback{display:grid;place-items:center;height:168px;margin:-14px -14px 12px;background:linear-gradient(135deg,#e6f1f9,#d4e5f2);color:#075b98;font-size:36px;font-weight:800;border-radius:6px 6px 0 0}
 .news-result-card p{display:-webkit-box;margin:0 0 9px;overflow:hidden;color:#616161;font-size:11px;line-height:1.5;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 .news-result-card small{color:#0067b8;font-size:10px}
 .news-reader{margin-top:20px;padding:20px;border:1px solid #c8dff0;border-radius:7px;background:#f8fbfd;scroll-margin-top:140px}
 .news-reader-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .news-reader-label{color:#005a9e;font-size:10px;font-weight:800;letter-spacing:1px}
-.news-reader-top button{width:34px;height:34px;border:1px solid #c8c8c8;border-radius:50%;background:#fff;color:#242424;font-size:23px;line-height:1;cursor:pointer}
+.news-reader-top button{min-width:36px;height:36px;padding:0 10px;border:1px solid #c8c8c8;border-radius:5px;background:#fff;color:#242424;font-size:13px;font-weight:700;line-height:1;cursor:pointer}.news-reader-top .news-share-button{width:auto;border-color:#0067b8;background:#0067b8;color:#fff}.news-reader-actions{display:flex;align-items:center;gap:7px}
 .news-reader h3{margin:12px 0 7px;color:#242424;font-size:22px;line-height:1.3}
 .news-reader-meta{color:#616161;font-size:11px}
 .news-reader-body{margin-top:15px;color:#343434;font-size:14px;line-height:1.8;white-space:pre-line}
@@ -548,7 +549,7 @@ body{top:0!important}
  <div id="newsStatus" class="news-status" role="status" aria-live="polite">Enter a topic above to find the latest available headlines.</div>
  <div id="newsExactGroup" class="news-result-group hidden"><h3>Exact matches <span id="newsExactCount"></span></h3><div id="newsExactResults" class="news-results"></div></div>
  <div id="newsRelatedGroup" class="news-result-group hidden"><h3>Related news <span id="newsRelatedCount"></span></h3><div id="newsRelatedResults" class="news-results"></div></div>
- <div id="newsReader" class="news-reader hidden" role="dialog" aria-modal="true" aria-labelledby="newsReaderTitle"><div class="news-reader-top"><span class="news-reader-label">SK CYBER HUB · NEWS READER</span><button id="closeNewsReader" type="button" aria-label="Close news reader" title="Close">×</button></div><h3 id="newsReaderTitle"></h3><div id="newsReaderMeta" class="news-reader-meta"></div><div id="newsReaderBody" class="news-reader-body"></div><p class="news-reader-note">This is the headline and summary supplied by the news feed. The original publisher owns the full article.</p></div>
+ <div id="newsReader" class="news-reader hidden" role="dialog" aria-modal="true" aria-labelledby="newsReaderTitle"><div class="news-reader-top"><span class="news-reader-label">SK CYBER HUB · NEWS READER</span><div class="news-reader-actions"><button id="shareNewsButton" class="news-share-button" type="button">Share news ↗</button><button id="closeNewsReader" type="button" aria-label="Close news reader" title="Close">×</button></div></div><h3 id="newsReaderTitle"></h3><div id="newsReaderMeta" class="news-reader-meta"></div><div id="newsReaderBody" class="news-reader-body"></div><p class="news-reader-note">This is the headline and summary supplied by the news feed. The original publisher owns the full article.</p></div>
 </section><section class="wrap" id="about"><div class="notice"><b>Our promise:</b> We aim to prioritize free and legitimate resources. External download links and advertisements will be clearly labelled. We will respect software licenses and copyright, and will not disguise download destinations. Any future ad-supported waiting step will be disclosed before the user continues.</div></section>
 </main>
 <section id="tab-admin" class="section wrap hidden"><div class="section-head"><div><h2>Admin Dashboard</h2><p>Manage listings saved in your connected database.</p></div><div><button class="primary" type="button" onclick="openAppModal()">+ Add App</button> <button class="secondary" type="button" onclick="logoutAdmin()">Log out</button></div></div><div class="manager"><div class="table-wrap"><table class="admin-table"><thead><tr><th>App</th><th>Category</th><th>Platform</th><th>Actions</th></tr></thead><tbody id="adminTableBody"></tbody></table></div></div>
@@ -718,7 +719,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   let items=null;
   try{
    const r=await Promise.race([fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(rss),{cache:'default'}),timeout(5500)]);
-   if(r.ok){const xml=await r.text(),doc=new DOMParser().parseFromString(xml,'text/xml');if(!doc.querySelector('parsererror'))items=[...doc.querySelectorAll('item')].map(n=>({title:n.querySelector('title')?.textContent||'',description:n.querySelector('description')?.textContent||'',link:n.querySelector('link')?.textContent||'',author:n.querySelector('source')?.textContent||'Google News',pubDate:n.querySelector('pubDate')?.textContent||''}));}
+   if(r.ok){const xml=await r.text(),doc=new DOMParser().parseFromString(xml,'text/xml');if(!doc.querySelector('parsererror'))items=[...doc.querySelectorAll('item')].map(n=>{const description=n.querySelector('description')?.textContent||'';const media=[...n.getElementsByTagNameNS('*','thumbnail'),...n.getElementsByTagNameNS('*','content')].map(x=>x.getAttribute('url')).find(Boolean);const enclosure=n.querySelector('enclosure')?.getAttribute('url');let embedded='';try{embedded=new DOMParser().parseFromString(description,'text/html').querySelector('img[src]')?.getAttribute('src')||'';}catch(e){}return {title:n.querySelector('title')?.textContent||'',description,link:n.querySelector('link')?.textContent||'',author:n.querySelector('source')?.textContent||'Google News',pubDate:n.querySelector('pubDate')?.textContent||'',image:safeImageUrl(media||enclosure||embedded)};});}
   }catch(e){console.warn('Primary news feed unavailable; using fallback',e);}
   if(!items){
    const r=await Promise.race([fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rss),{cache:'default'}),timeout(5500)]);
@@ -728,8 +729,12 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   feedCache.set(key,{time:Date.now(),items});if(feedCache.size>25)feedCache.delete(feedCache.keys().next().value);
   return items;
  }
+ function safeImageUrl(value){try{const u=new URL(String(value||''));return u.protocol==='https:'?u.href:'';}catch(e){return '';}}
+ function getNewsImage(item){if(item.image)return safeImageUrl(item.image);const raw=String(item.description||item.content||'');try{const doc=new DOMParser().parseFromString(raw,'text/html');const img=doc.querySelector('img[src]');if(img)return safeImageUrl(img.getAttribute('src'));}catch(e){}return '';}
+ function makeImageFallback(item){const fallback=document.createElement('div');fallback.className='news-card-image-fallback';fallback.setAttribute('aria-label','News photo unavailable');fallback.textContent=(cleanText(item.author||item.title||'N').charAt(0)||'N').toUpperCase();return fallback;}
  function makeCard(item){
   const button=document.createElement('button');button.type='button';button.className='news-result-card';
+  const imageUrl=getNewsImage(item);if(imageUrl){const image=document.createElement('img');image.className='news-card-image';image.alt='News photo';image.loading='lazy';image.decoding='async';image.src=imageUrl;image.addEventListener('error',()=>image.replaceWith(makeImageFallback(item)),{once:true});button.appendChild(image);}else button.appendChild(makeImageFallback(item));
   const title=document.createElement('strong');title.textContent=item.translatedTitle||cleanText(item.title)||'Untitled news';
   const description=document.createElement('p');description.textContent=item.translatedDescription||cleanText(item.description||item.content||'News summary is not available in this feed.');
   const meta=document.createElement('small');meta.textContent=(item.translatedAuthor||cleanText(item.author)||'News source')+' · '+(item.pubDate?new Date(item.pubDate).toLocaleString():'Latest update');
@@ -760,7 +765,9 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   reader.classList.remove('hidden');reader.scrollIntoView({behavior:'smooth',block:'start'});
  }
  function closeReader(){reader.classList.add('hidden');}
+ async function shareNews(){const title=document.getElementById('newsReaderTitle').textContent||'World News';const summary=document.getElementById('newsReaderBody').textContent||'';const pageUrl=window.location.href.split('#')[0]+'#news';const shareText=title+'\n\n'+summary.slice(0,420)+'\n\nSK CYBER HUB · SAAD YOUSUF KAKAR\n'+pageUrl;try{if(navigator.share){await navigator.share({title,text:shareText,url:pageUrl});return;}if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareText);status.textContent='News text, website name and link copied. Paste into WhatsApp, Facebook or your status.';return;}status.textContent='Sharing is unavailable. Website link: '+pageUrl;}catch(error){if(error?.name!=='AbortError')status.textContent='Sharing failed. Website link: '+pageUrl;}}
  document.getElementById('closeNewsReader').addEventListener('click',closeReader);
+ document.getElementById('shareNewsButton').addEventListener('click',shareNews);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!reader.classList.contains('hidden'))closeReader();});
  async function searchNews(){
   const spokenOrTyped=queryInput.value.trim();
@@ -802,14 +809,15 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  }
  searchButton.addEventListener('click',searchNews);
  queryInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchNews();}});
+ function correctVoiceNames(choices){const candidates=choices.map(x=>x.trim());let chosen=candidates.find(x=>/\bimran\s+khan\b/i.test(x))||candidates.find(x=>/\bemraan\s+khan\b/i.test(x))||candidates[0]||'';return chosen.replace(/\bemraan\s+khan\b/gi,'Imran Khan').replace(/\bimraan\s+khan\b/gi,'Imran Khan');}
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(SpeechRecognition){
   let recognition=null,listening=false;
   micButton.addEventListener('click',()=>{
    if(listening){recognition?.stop();return;}
-   recognition=new SpeechRecognition();recognition.lang=navigator.language||'en-US';recognition.interimResults=true;recognition.continuous=false;recognition.maxAlternatives=1;
+   recognition=new SpeechRecognition();recognition.lang=navigator.language||'en-US';recognition.interimResults=true;recognition.continuous=false;recognition.maxAlternatives=5;
    recognition.onstart=()=>{listening=true;micButton.classList.add('is-listening');micButton.setAttribute('aria-label','Stop voice search');status.textContent='Listening… speak your news topic now.';};
-   recognition.onresult=event=>{let transcript='';for(let i=event.resultIndex;i<event.results.length;i++)transcript+=event.results[i][0].transcript;if(transcript){queryInput.value=transcript;if(event.results[event.results.length-1].isFinal)searchNews();}};
+   recognition.onresult=event=>{let transcript='';for(let i=event.resultIndex;i<event.results.length;i++){const result=event.results[i];const choices=[...result].map(x=>x.transcript);transcript+=result.isFinal?correctVoiceNames(choices):(choices[0]||'');}if(transcript){queryInput.value=transcript;if(event.results[event.results.length-1].isFinal)searchNews();}};
    recognition.onerror=event=>{status.textContent=event.error==='not-allowed'?'Microphone permission is blocked. Allow microphone access in your browser.':'Voice search could not start. Please type your search instead.';};
    recognition.onend=()=>{listening=false;micButton.classList.remove('is-listening');micButton.setAttribute('aria-label','Speak your search');};
    try{recognition.start();}catch(e){status.textContent='Voice search is already starting. Please wait.';}
