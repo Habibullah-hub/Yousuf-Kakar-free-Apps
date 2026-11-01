@@ -778,6 +778,42 @@ img,iframe,video{max-width:100%}
  .news-section .news-query-control #newsSearchButton{flex:0 0 auto!important;min-width:76px!important;height:40px!important;min-height:40px!important;padding:0 7px!important;font-size:10px!important}
 }
 
+
+/* Correct News language dropdown flow: keep it between language and topic fields */
+.news-section .news-language-row{
+ position:relative!important;
+ overflow:visible!important;
+ z-index:8!important;
+}
+.news-section .news-language-row .news-language-choices{
+ position:static!important;
+ display:grid!important;
+ width:100%!important;
+ max-height:210px!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ margin:7px 0 0!important;
+ padding:6px!important;
+ border:1px solid #cbd9e5!important;
+ border-radius:6px!important;
+ background:#fff!important;
+ box-shadow:0 6px 16px #18365314!important;
+}
+.news-section .news-language-row .news-language-choices.hidden{
+ display:none!important;
+}
+.news-section .news-language-row .news-language-choices .language-choice{
+ width:100%!important;
+ min-height:36px!important;
+ text-align:left!important;
+}
+.news-section .news-search-row{position:relative!important;z-index:1!important}
+@media(max-width:600px){
+ .news-section .news-language-row .news-language-choices{
+  max-height:190px!important;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -1291,6 +1327,12 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
   if(!newsSection)return;
   event.preventDefault();
   history.replaceState(null,'','#news');
+  const openNewsLanguages=document.getElementById('newsLanguageChoices');
+  const newsLanguageArrow=document.getElementById('newsLanguageDropdownButton');
+  const siteLanguagePanel=document.getElementById('siteLanguagePanel');
+  if(openNewsLanguages)openNewsLanguages.classList.add('hidden');
+  if(newsLanguageArrow)newsLanguageArrow.setAttribute('aria-expanded','false');
+  if(siteLanguagePanel)siteLanguagePanel.classList.add('hidden');
   newsSection.scrollIntoView({behavior:'smooth',block:'start'});
  });
  fullArticleButton.addEventListener('click',()=>{
