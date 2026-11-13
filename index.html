@@ -710,6 +710,92 @@ img,iframe,video{max-width:100%}
 @media(prefers-reduced-motion:reduce){
  .news-section *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* YK Hub — NEON X reference-matched storefront */
+:root{--bg:#05060b;--surface:#0b0e18;--surface-2:#111528;--line:#252b45;--text:#f6f7ff;--muted:#a5acc5;--accent:#25d9f2;--accent-soft:#102b3c;color-scheme:dark}
+html,body{background:#05060b!important;color:#f6f7ff!important}
+body{font-family:Inter,"Segoe UI",system-ui,sans-serif;background:radial-gradient(ellipse at 50% 0%,#15153a 0%,#080a16 40%,#05060b 78%)!important}
+.wrap{width:min(1280px,calc(100% - 36px))}
+.top{background:#080a12ed!important;border-color:#242943!important;backdrop-filter:blur(18px)!important}
+.nav{min-height:64px}
+.brand{color:#f7f8ff!important;letter-spacing:.8px}
+.brand .mark{background:linear-gradient(145deg,#192b55,#14203e)!important;border:1px solid #2e9db9!important;color:#5feaff!important;box-shadow:0 0 18px #11cce822}
+.brand small{color:#8290b5!important}
+.links{color:#c7cce0!important}
+.links a:hover{color:#35e4ff!important}
+.primary,.searchbox button{background:linear-gradient(100deg,#12c9e8,#6c5cff)!important;border:0!important;color:#050914!important;border-radius:7px!important;box-shadow:0 0 18px #21c9ef28}
+.category-dock{top:64px;background:#090c17ed!important;border-color:#252b45!important;backdrop-filter:blur(18px)!important}
+.dock-inner{grid-template-columns:210px minmax(0,1fr)!important;gap:8px 12px!important}
+.category-toggle,.dock-inner>.searchbox{background:#101528!important;border:1px solid #2b3656!important;border-radius:8px!important;color:#f4f6ff!important}
+.category-toggle span{color:#36e5ff!important}
+.category-menu{background:#0d1222!important;border-color:#344263!important}
+.category-menu a{color:#e8edff!important;border-color:#252e49!important}
+.category-menu a:hover{background:#182443!important;color:#4be9ff!important}
+.searchbox input{color:#f7f8ff!important}
+.searchbox input::placeholder{color:#8490ad!important}
+.quick-nav a{color:#bdc5df!important;border-radius:20px!important}
+.quick-nav a:hover,.quick-nav a[aria-current="location"]{background:#132b43!important;border-color:#17617a!important;color:#55edff!important}
+.quick-nav a[aria-current="location"]:after{background:#35e5ff!important}
+.store-hero{min-height:350px!important;margin:22px auto 8px!important;padding:clamp(24px,4vw,48px)!important;border:1px solid #26365e!important;border-radius:16px!important;background:linear-gradient(112deg,#080d20 0%,#111438 52%,#24104a 100%)!important;box-shadow:0 18px 55px #0008,inset 0 0 55px #5a35d21a!important}
+.store-hero:before{background:radial-gradient(circle at 78% 48%,#8c36ff48,transparent 34%),radial-gradient(circle at 10% 100%,#00d9f533,transparent 42%)!important}
+.eyebrow{background:#121d39!important;border:1px solid #28617e!important;color:#8cf3ff!important;border-radius:20px!important}
+.dot{background:#35e5ff!important;box-shadow:0 0 12px #35e5ff!important}
+.store-hero h1{color:#fff!important;text-shadow:0 3px 22px #0008!important}
+.store-hero h1 span{background:linear-gradient(90deg,#23e7ff,#9c7aff,#ff4fcb)!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important}
+.store-hero .intro{color:#c3c9e3!important}
+.hero-secondary{border:1px solid #52618c!important;background:#10172d88!important;color:#edf2ff!important;border-radius:7px!important}
+.art-orbit{border-color:#35dffb55!important;filter:drop-shadow(0 0 7px #2fdfff44)}
+.art-tile{border:1px solid #5d58bb!important;background:linear-gradient(145deg,#32218a,#101d48)!important;box-shadow:0 12px 38px #05040eaa,0 0 25px #6c39ff55!important}
+.tile-main{background:linear-gradient(145deg,#202d66,#5b1f8d)!important}
+.tile-a,.tile-b,.tile-c{background:linear-gradient(145deg,#103b58,#29205e)!important}
+.section{padding:25px 0!important}
+.section-head{border-color:#252b45!important}
+.section h2{color:#f5f7ff!important}
+.section-head h2:before{background:linear-gradient(#2ce9ff,#8a62ff)!important}
+.section-head p{color:#9ca7c6!important}
+.section-count{background:#111c36!important;border:1px solid #315779!important;color:#65eaff!important}
+.resource-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:15px!important}
+.resource.tile{grid-template-columns:68px minmax(0,1fr)!important;grid-template-rows:auto auto!important;min-height:126px!important;padding:14px!important;border:1px solid #252e4d!important;border-radius:12px!important;background:linear-gradient(145deg,#101528,#090d19)!important;box-shadow:0 8px 24px #0005,inset 0 1px #ffffff08!important}
+.resource.tile:hover{transform:translateY(-3px)!important;border-color:#2baec5!important;background:linear-gradient(145deg,#14213b,#0b1021)!important;box-shadow:0 10px 28px #001a2c,0 0 16px #14cce51b!important}
+.resource .app-icon{grid-column:1!important;grid-row:1/3!important;width:68px!important;height:68px!important;border:1px solid #4c3d89!important;border-radius:10px!important;background:linear-gradient(145deg,#1e2b60,#4b1c68)!important;color:#e3f8ff!important;box-shadow:inset 0 0 18px #8b4bff2b!important}
+.resource .tag{background:#142744!important;border:1px solid #255a76!important;color:#70eaff!important;border-radius:4px!important}
+.resource h3{color:#f5f7ff!important}
+.resource p{color:#9da8c6!important}
+.resource .arrow{background:#11283a!important;border:1px solid #23627b!important;color:#61eaff!important;border-radius:6px!important}
+.resource .arrow:hover{background:#173b54!important}
+#empty,.notice,.manager,.user-resource{background:#0c1120!important;border-color:#273553!important;color:#b8c2df!important}
+.notice b,.manager label,.user-resource h3{color:#f4f6ff!important}
+.manager input,.manager select{background:#080d19!important;border-color:#2a3858!important;color:#f4f6ff!important}
+.secondary,.search-clear{background:#111a30!important;border-color:#35466b!important;color:#e8edff!important}
+.manager-status,.search-feedback{background:#10253a!important;border-color:#27617a!important;color:#8feeff!important}
+.footer{border-color:#252b45!important;color:#8f9ab8!important}
+.back-top{background:#112e45!important;border-color:#25cce8!important;color:#5deaff!important;box-shadow:0 0 18px #20d8ef35!important}
+:focus-visible{outline:2px solid #3be7ff!important}
+::selection{background:#3a50a5;color:#fff}
+@media(max-width:900px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:760px){
+ .wrap{width:calc(100% - 24px)!important}
+ .nav{min-height:58px!important}
+ .category-dock{top:58px!important}
+ .dock-inner{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)!important}
+ .store-hero{min-height:300px!important;margin-top:14px!important;padding:22px 17px!important;grid-template-columns:1fr!important;gap:0!important}
+ .store-hero h1{font-size:clamp(32px,8vw,43px)!important}
+ .store-hero-art{height:135px!important}
+ .orbit-one{width:205px!important;height:120px!important}.orbit-two{width:155px!important;height:180px!important}
+ .tile-main{width:82px!important;height:82px!important;font-size:27px!important}
+ .tile-small{width:40px!important;height:40px!important}
+ .resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ .resource.tile{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important;min-height:0!important;padding:9px!important;border-radius:10px!important}
+ .resource .app-icon{width:100%!important;height:104px!important;flex:none!important;border-radius:8px!important;font-size:25px!important}
+ .resource .app-info{min-width:0!important}
+ .resource h3{font-size:12px!important;white-space:normal!important;min-height:30px!important}
+ .resource p{font-size:10px!important;min-height:28px!important}
+ .resource .arrow{align-self:flex-start!important;margin-top:2px!important;font-size:9px!important;padding:6px 8px!important}
+ .section{padding:17px 0!important}
+ .section h2{font-size:18px!important}
+}
+@media(max-width:360px){.resource .app-icon{height:88px!important}.resource.tile{padding:7px!important}}
+
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
