@@ -1085,7 +1085,7 @@ a.resource.tile{display:flex!important;flex-direction:column!important;align-ite
     </div>
 
 
-<footer class="wrap footer"><span>© <span id="year"></span> SK Cyber Hub · SAAD YOUSUF KAKAR</span><span>Built to explore. Designed for everyone.</span></footer>
+<footer class="wrap footer"><span>© <span id="year"></span> Yousuf Kakar Free Apps · YK HUB</span><span>Built to explore. Designed for everyone.</span></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
@@ -1133,8 +1133,8 @@ a.resource.tile{display:flex!important;flex-direction:column!important;align-ite
  }
  $('bulkTemplate').addEventListener('click',()=>{
   const data=[['App Name','Category','Platform','Version','Icon URL','Download Link','Description','Featured'],['VLC','Apps','Android','Latest','https://www.google.com/s2/favicons?domain=videolan.org&sz=128','https://play.google.com/store/apps/details?id=org.videolan.vlc','Official media player','false']];
-  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Apps');XLSX.writeFile(wb,'SK-Cyber-Hub-App-Upload-Template.xlsx');}
-  else {const csv=data.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='SK-Cyber-Hub-App-Upload-Template.csv';a.click();URL.revokeObjectURL(a.href);}
+  if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(data),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Apps');XLSX.writeFile(wb,'YK-Hub-App-Upload-Template.xlsx');}
+  else {const csv=data.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='YK-Hub-App-Upload-Template.csv';a.click();URL.revokeObjectURL(a.href);}
  });
  $('bulkPreviewBtn').addEventListener('click',async()=>{
   try{
@@ -1243,9 +1243,9 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
  const publisherFallback=document.getElementById('newsPublisherFallback');
  function safeNewsArticleUrl(value){try{const url=new URL(String(value||''));return url.protocol==='https:'||url.protocol==='http:'?url.href:'';}catch(e){return '';}}
  const newsLanguageSelect=document.getElementById('newsLanguageSelect'),newsLanguageInput=document.getElementById('newsLanguageSearch');
- try{newsLanguageSelect.value=sessionStorage.getItem('skcyberhub_news_language_session')||'en';}catch(e){}
+ try{newsLanguageSelect.value=sessionStorage.getItem('ykhub_news_language_session')||'en';}catch(e){}
  newsLanguageInput.value=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';
- newsLanguageSelect.addEventListener('change',()=>{newsLanguageInput.value=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';try{sessionStorage.setItem('skcyberhub_news_language_session',newsLanguageSelect.value);}catch(e){}});
+ newsLanguageSelect.addEventListener('change',()=>{newsLanguageInput.value=newsLanguageSelect.options[newsLanguageSelect.selectedIndex]?.textContent||'English';try{sessionStorage.setItem('ykhub_news_language_session',newsLanguageSelect.value);}catch(e){}});
  let searchSequence=0,languageRenderSequence=0,activeNewsExact=[],activeNewsRelated=[];
  const feedCache=new Map(),translationCache=new Map();
  const cleanText=value=>String(value||'').replace(/<[^>]*>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();
@@ -1363,7 +1363,7 @@ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();runS
    catch(error){return {...item,translatedTitle:originalTitle,translatedDescription:originalDescription,translationFailed:true};}
   }));
  }
- window.addEventListener('skcyberhub-news-language-change',async event=>{
+ window.addEventListener('ykhub-news-language-change',async event=>{
   const target=event.detail?.code||newsLanguageSelect.value||'en';
   newsLanguageSelect.value=target;
   if(!activeNewsExact.length&&!activeNewsRelated.length)return;
@@ -1590,14 +1590,8 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         let currentCat = 'All';
         let currentUser = null;
 
-        let sampleApps = [
-            { id: '1', name: 'YK Speed Cleaner Pro', category: 'Tools', platform: 'Android', version: 'v2.5.0', icon_url: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=120', download_url: '#', description: 'Lightweight memory optimizer and cache cleaner for Android devices. Boosts performance with one tap.', featured: true },
-            { id: '2', name: 'YK PDF Converter & Editor', category: 'Productivity', platform: 'Android', version: 'v1.8.0', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120', download_url: '#', description: 'Convert images and documents to PDF instantly. Features offline OCR text recognition.', featured: true },
-            { id: '3', name: 'YK Dark Cyber Racer', category: 'Games', platform: 'Android', version: 'v1.0.4', icon_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=120', download_url: '#', description: 'High speed arcade racing game optimized for budget Android devices with ultra smooth 60fps.', featured: false },
-            { id: '4', name: 'YK Media Downloader', category: 'Tools', platform: 'Windows', version: 'v3.1.2', icon_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120', download_url: '#', description: 'Download HD videos and audio files directly to your PC with batch link support.', featured: true }
-        ];
-
-        let appsList = [...sampleApps];
+        // Never display invented/demo listings as real downloads.
+        let appsList = [];
 
         if (supabaseUrl && supabaseKey) {
             document.getElementById('configAlert').classList.add('hidden');
@@ -1773,10 +1767,18 @@ document.getElementById('clearResource').addEventListener('click',()=>{
                 });
                 const getLink = document.createElement('a');
                 getLink.className = 'flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs text-center flex items-center justify-center space-x-1 shadow-md shadow-emerald-500/20';
-                getLink.href = safeHttpUrl(app.download_url) || '#';
-                getLink.rel = 'noopener noreferrer';
+                const downloadHref = safeHttpUrl(app.download_url);
+                if (downloadHref) {
+                    getLink.href = downloadHref;
+                    getLink.rel = 'noopener noreferrer';
+                } else {
+                    getLink.removeAttribute('href');
+                    getLink.setAttribute('aria-disabled', 'true');
+                    getLink.style.opacity = '0.55';
+                    getLink.style.pointerEvents = 'none';
+                }
                 const getLabel = document.createElement('span');
-                getLabel.textContent = 'Get';
+                getLabel.textContent = downloadHref ? 'Get' : 'Link unavailable';
                 getLink.appendChild(getLabel);
                 actions.append(details, getLink);
                 card.append(top, detailsPanel, actions);
@@ -1784,6 +1786,14 @@ document.getElementById('clearResource').addEventListener('click',()=>{
             };
 
             grid.replaceChildren(...filtered.map(makeAppCard));
+            if (!filtered.length) {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.className = 'empty';
+                emptyMessage.textContent = supabaseClient
+                    ? 'ابھی اس زمرے میں کوئی شائع شدہ ایپ موجود نہیں۔ بعد میں دوبارہ دیکھیں۔'
+                    : 'ایپس دیکھنے کے لیے ویب سائٹ کا ڈیٹا بیس منسلک ہونا ضروری ہے۔';
+                grid.appendChild(emptyMessage);
+            }
 
             if (modGrid) {
                 const modApps = visibleApps.filter(app => {
@@ -1964,11 +1974,11 @@ document.getElementById('clearResource').addEventListener('click',()=>{
 <script>
 /* Language menus use a local Google Translate language list, so they never remain stuck on Loading */
 (function(){
- const toggle=document.getElementById('siteLanguageToggle'),panel=document.getElementById('siteLanguagePanel'),siteSelect=document.getElementById('siteLanguageSelect'),newsSelect=document.getElementById('newsLanguageSelect'),siteSearch=document.getElementById('siteLanguageSearch'),newsSearch=document.getElementById('newsLanguageSearch'),storageKey='skcyberhub_language_session';
+ const toggle=document.getElementById('siteLanguageToggle'),panel=document.getElementById('siteLanguagePanel'),siteSelect=document.getElementById('siteLanguageSelect'),newsSelect=document.getElementById('newsLanguageSelect'),siteSearch=document.getElementById('siteLanguageSearch'),newsSearch=document.getElementById('newsLanguageSearch'),storageKey='ykhub_language_session';
  const languages=[['af','Afrikaans'],['sq','Albanian'],['am','Amharic'],['ar','Arabic'],['hy','Armenian'],['bn','Bengali'],['zh-CN','Chinese (Simplified)'],['zh-TW','Chinese (Traditional)'],['nl','Dutch'],['en','English'],['fil','Filipino'],['fi','Finnish'],['fr','French'],['de','German'],['el','Greek'],['gu','Gujarati'],['he','Hebrew'],['hi','Hindi'],['hu','Hungarian'],['id','Indonesian'],['it','Italian'],['ja','Japanese'],['jv','Javanese'],['kn','Kannada'],['ko','Korean'],['ku','Kurdish'],['ms','Malay'],['ml','Malayalam'],['mr','Marathi'],['ne','Nepali'],['ps','Pashto'],['fa','Persian'],['pl','Polish'],['pt','Portuguese'],['pa','Punjabi'],['ro','Romanian'],['ru','Russian'],['sd','Sindhi'],['si','Sinhala'],['es','Spanish'],['sw','Swahili'],['sv','Swedish'],['ta','Tamil'],['te','Telugu'],['th','Thai'],['tr','Turkish'],['uk','Ukrainian'],['ur','Urdu'],['uz','Uzbek'],['vi','Vietnamese'],['cy','Welsh'],['az','Azerbaijani'],['eu','Basque'],['be','Belarusian'],['bs','Bosnian'],['bg','Bulgarian'],['ca','Catalan'],['ceb','Cebuano'],['ny','Chichewa'],['co','Corsican'],['hr','Croatian'],['cs','Czech'],['da','Danish'],['eo','Esperanto'],['et','Estonian'],['fj','Fijian'],['fy','Frisian'],['gl','Galician'],['ka','Georgian'],['ht','Haitian Creole'],['ha','Hausa'],['haw','Hawaiian'],['hmn','Hmong'],['is','Icelandic'],['ig','Igbo'],['ga','Irish'],['kk','Kazakh'],['km','Khmer'],['rw','Kinyarwanda'],['ky','Kyrgyz'],['lo','Lao'],['la','Latin'],['lv','Latvian'],['lt','Lithuanian'],['lb','Luxembourgish'],['mk','Macedonian'],['mg','Malagasy'],['mt','Maltese'],['mi','Maori'],['mn','Mongolian'],['my','Myanmar'],['no','Norwegian'],['or','Odia'],['sm','Samoan'],['gd','Scots Gaelic'],['sr','Serbian'],['st','Sesotho'],['sn','Shona'],['sk','Slovak'],['sl','Slovenian'],['so','Somali'],['su','Sundanese'],['tg','Tajik'],['tt','Tatar'],['tk','Turkmen'],['ug','Uyghur'],['xh','Xhosa'],['yi','Yiddish'],['yo','Yoruba'],['zu','Zulu']];
  let current='en';try{current=sessionStorage.getItem(storageKey)||'en';}catch(e){}
  function addOptions(id){const list=document.getElementById(id);languages.forEach(([code,name])=>{const o=document.createElement('option');o.value=name;o.label=code.toUpperCase();list.appendChild(o);if(id==='newsLanguageOptions'){const option=document.createElement('option');option.value=code;option.textContent=name;newsSelect.appendChild(option);}});}
- newsSelect.replaceChildren();addOptions('siteLanguageOptions');addOptions('newsLanguageOptions');let savedNewsLanguage='en';try{savedNewsLanguage=sessionStorage.getItem('skcyberhub_news_language_session')||'en';}catch(e){}newsSelect.value=savedNewsLanguage;newsSearch.value=languages.find(x=>x[0]===savedNewsLanguage)?.[1]||'English';
+ newsSelect.replaceChildren();addOptions('siteLanguageOptions');addOptions('newsLanguageOptions');let savedNewsLanguage='en';try{savedNewsLanguage=sessionStorage.getItem('ykhub_news_language_session')||'en';}catch(e){}newsSelect.value=savedNewsLanguage;newsSearch.value=languages.find(x=>x[0]===savedNewsLanguage)?.[1]||'English';
  function findLang(value){const v=value.trim().toLowerCase();return languages.find(([c,n])=>c.toLowerCase()===v||n.toLowerCase()===v);}
  // Put Urdu and English first, then the remaining supported languages alphabetically.
  const orderedLanguages=[...languages.filter(x=>x[0]==='ur'||x[0]==='en').sort((a,b)=>a[0]==='ur'?-1:1),...languages.filter(x=>x[0]!=='ur'&&x[0]!=='en').sort((a,b)=>a[1].localeCompare(b[1]))];
@@ -1978,7 +1988,7 @@ document.getElementById('clearResource').addEventListener('click',()=>{
  const siteChoices=document.getElementById('siteLanguageChoices'),newsChoices=document.getElementById('newsLanguageChoices');
  const newsDropdown=document.getElementById('newsLanguageDropdownButton');
  function chooseSiteLanguage(code,name){siteSearch.value=name;applyLanguage(code);panel.classList.add('hidden');toggle.setAttribute('aria-expanded','false');}
- function chooseNewsLanguage(code,name){newsSelect.value=code;newsSearch.value=name;try{sessionStorage.setItem('skcyberhub_news_language_session',code);}catch(e){}newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');window.dispatchEvent(new CustomEvent('skcyberhub-news-language-change',{detail:{code,name}}));}
+ function chooseNewsLanguage(code,name){newsSelect.value=code;newsSearch.value=name;try{sessionStorage.setItem('ykhub_news_language_session',code);}catch(e){}newsChoices.classList.add('hidden');newsDropdown.setAttribute('aria-expanded','false');window.dispatchEvent(new CustomEvent('ykhub-news-language-change',{detail:{code,name}}));}
  fillChoiceList(siteChoices,'',(code,name)=>chooseSiteLanguage(code,name));
  fillChoiceList(newsChoices,'',(code,name)=>chooseNewsLanguage(code,name));
  siteSearch.addEventListener('focus',()=>{if(findLang(siteSearch.value))siteSearch.value='';fillChoiceList(siteChoices,siteSearch.value,(code,name)=>chooseSiteLanguage(code,name));siteChoices.classList.remove('hidden');});
