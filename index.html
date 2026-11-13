@@ -1891,6 +1891,11 @@ document.getElementById('clearResource').addEventListener('click',()=>{
         function openSupabaseModal() { document.getElementById('supabaseModal').classList.remove('hidden'); }
         function closeSupabaseModal() { document.getElementById('supabaseModal').classList.add('hidden'); }
         function openAppModal(app=null) {
+            if (!currentUser || !supabaseClient) {
+                if (!supabaseClient) openSupabaseModal();
+                else openAuthModal();
+                return;
+            }
             document.getElementById('appModalTitle').innerText = app ? 'Edit App' : 'Add App';
             document.getElementById('appId').value = app ? app.id : '';
             document.getElementById('appName').value = app ? app.name : '';
@@ -1966,7 +1971,8 @@ document.getElementById('clearResource').addEventListener('click',()=>{
 
         async function handleAppSubmit(e) {
             e.preventDefault();
-            if (!supabaseClient) return alert('Config Supabase first');
+            if (!supabaseClient) return alert('Supabase connection required.');
+            if (!currentUser) return alert('Admin login required.');
             const id = document.getElementById('appId').value;
             const data = {
                 name: document.getElementById('appName').value,
@@ -1986,6 +1992,7 @@ document.getElementById('clearResource').addEventListener('click',()=>{
 
         function editApp(id) { openAppModal(appsList.find(a => a.id === id)); }
         async function deleteApp(id) {
+            if (!currentUser || !supabaseClient) return alert('Admin login and database connection required.');
             if (!confirm('Delete app?')) return;
             if (supabaseClient) {
                 await supabaseClient.from('apps').delete().eq('id', id);
@@ -1993,11 +2000,6 @@ document.getElementById('clearResource').addEventListener('click',()=>{
             }
         }
 
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            alert('Thank you! Message sent.');
-            e.target.reset();
-        }
 
         renderApps();
     </script>
